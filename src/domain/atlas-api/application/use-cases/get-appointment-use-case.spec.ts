@@ -1,0 +1,56 @@
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
+
+import { GetAppointmentUseCase } from './get-appointment-use-case'
+import { makeAppointment } from 'tests/factories/make-appointment'
+import { makeEvent } from 'tests/factories/make-events'
+import { InMemoryAppointmentRepository } from 'tests/repositories/in-memory-appointment-repository'
+import { InMemoryEventRepository } from 'tests/repositories/in-memory-events-repository'
+
+let inMemoryAppointmentRepository: InMemoryAppointmentRepository
+let inMemoryEventRepository: InMemoryEventRepository
+let sut: GetAppointmentUseCase
+
+describe('Get Appointment', () => {
+  beforeEach(() => {
+    inMemoryAppointmentRepository = new InMemoryAppointmentRepository()
+    inMemoryEventRepository = new InMemoryEventRepository(
+      inMemoryAppointmentRepository
+    )
+
+    sut = new GetAppointmentUseCase(
+      inMemoryAppointmentRepository,
+      inMemoryEventRepository
+    )
+  })
+
+  it('should be able to get appointment by appointmentId', async () => {
+    const event = makeEvent({})
+    inMemoryEventRepository.items.push(event)
+    const appointment = makeAppointment({
+      eventId: event.id,
+    })
+    inMemoryAppointmentRepository.items.push(appointment)
+
+    expect(inMemoryAppointmentRepository.items.length).toBe(1)
+    const result = await sut.execute({
+      eventId: event.id.toValue(),
+    })
+
+    expect(result.isRight()).toBe(true)
+    if (result.isRight()) {
+      expect(result.value.appointment).toBeTruthy()
+      expect(result.value.event).toBeTruthy()
+    }
+  })
+
+  it('should be not able to get appointment, not found ', async () => {
+    const result = await sut.execute({
+      eventId: 'appointment-01',
+    })
+
+    expect(result.isLeft()).toBe(true)
+    if (result.isLeft()) {
+      expect(result.value).toBeInstanceOf(ResourceNotFoundError)
+    }
+  })
+})
