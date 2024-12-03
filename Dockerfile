@@ -26,5 +26,5 @@ COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
 COPY --from=build /usr/src/app/package.json ./package.json
 
-EXPOSE 9000
+EXPOSE 3333
 CMD ["node", "dist/src/infra/http/server.js"]
