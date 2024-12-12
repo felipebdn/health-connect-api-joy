@@ -19,7 +19,7 @@ export async function NewEventRouter(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
-    .put(
+    .post(
       '/provider/events/new',
       {
         schema: {
