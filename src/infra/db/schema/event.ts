@@ -10,7 +10,7 @@ import { relations } from 'drizzle-orm'
 import { AppointmentDb } from './appointment'
 import { ProviderDb } from './provider'
 
-export const Title = pgEnum('Title', ['availability', 'appointment'])
+export const TitleEvent = pgEnum('title_event', ['availability', 'appointment'])
 
 export const EventDb = pgTable(
   'events',
@@ -19,7 +19,7 @@ export const EventDb = pgTable(
       .notNull()
       .primaryKey()
       .$defaultFn(() => createId()),
-    title: Title('title').notNull(),
+    title: TitleEvent('title').notNull(),
     startTime: timestamp('start_time', {
       withTimezone: true,
       precision: 3,

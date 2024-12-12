@@ -66,7 +66,10 @@ app.register(ScalarApiReference, {
   },
 })
 
-app.register(fastifyCors)
+app.register(fastifyCors,{
+  origin: true,
+  credentials: true
+})
 
 app.register(AuthenticateRouter)
 app.register(ForgetPasswordRouter)
