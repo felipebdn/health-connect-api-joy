@@ -25,7 +25,7 @@ export async function ListAvailabilityByMonthRouter(app: FastifyInstance) {
         }),
         response: {
           200: z.object({
-            schedules: z.array(z.date()),
+            dates: z.array(z.date()),
           }),
           400: z.string(),
           404: z.string(),
@@ -47,7 +47,7 @@ export async function ListAvailabilityByMonthRouter(app: FastifyInstance) {
             return reply.status(400).send(error.message)
         }
       }
-      return reply.status(200).send({ schedules: result.value.dates })
+      return reply.status(200).send({ dates: result.value.dates })
     }
   )
 }

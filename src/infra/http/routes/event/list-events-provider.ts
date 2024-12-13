@@ -19,7 +19,7 @@ export async function ListEventsProviderRouter(app: FastifyInstance) {
     {
       schema: {
         tags: ['Event'],
-        summary: 'List availability by month.',
+        summary: 'List events provider.',
         params: z.object({
           providerId: z.string(),
         }),
