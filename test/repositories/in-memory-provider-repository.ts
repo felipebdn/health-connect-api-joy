@@ -23,6 +23,39 @@ export class InMemoryProviderRepository implements ProviderRepository {
     this.items.splice(providerIndex, 1)
   }
 
+  async findByFilter(data: {
+    name?: string
+    specialty?: string
+    amount?: number
+    page?: number
+  }): Promise<Provider[]> {
+    const { name, specialty, amount, page } = data
+
+    let filteredProviders = this.items
+
+    // Filtro por nome
+    if (name) {
+      filteredProviders = filteredProviders.filter((provider) =>
+        provider.name.toLowerCase().includes(name.toLowerCase())
+      )
+    }
+
+    // Filtro por especialidade
+    if (specialty) {
+      filteredProviders = filteredProviders.filter(
+        (provider) => provider.specialty === specialty
+      )
+    }
+
+    filteredProviders.sort((a, b) => a.name.localeCompare(b.name))
+
+    // Paginação
+    const take = amount ?? 20 // Número de itens por página (default: 20)
+    const skip = page ? page * take : 0 // Ignorar os primeiros itens
+
+    return filteredProviders.slice(skip, skip + take)
+  }
+
   async findById(id: string): Promise<Provider | null> {
     const provider = this.items.find((item) => item.id.toValue() === id)
 

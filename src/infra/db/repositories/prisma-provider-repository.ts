@@ -30,6 +30,29 @@ export class PrismaProviderRepository implements ProviderRepository {
     })
   }
 
+  async findByFilter(data: {
+    name?: string
+    specialty?: string
+    amount?: number
+    page?: number
+  }): Promise<Provider[]> {
+    const providers = await this.prisma.provider.findMany({
+      where: {
+        ...(data.name && {
+          name: { contains: data.name, mode: 'insensitive' },
+        }),
+        ...(data.specialty && {
+          specialty: data.specialty,
+        }),
+      },
+      take: data.amount,
+      skip: data.page ? data.page * (data.amount ?? 20) : undefined,
+      orderBy: { name: 'asc' },
+    })
+
+    return providers.map((item) => PrismaProviderMapper.toDomain(item))
+  }
+
   async findById(id: string): Promise<Provider | null> {
     const providerResult = await this.prisma.provider.findUnique({
       where: {
