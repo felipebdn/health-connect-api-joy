@@ -3,10 +3,12 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { AppointmentPresenter } from '@/infra/db/presenters/appointments-presenter'
 import { ListAppointmentsEmailCPFUseCase } from '@/domain/atlas-api/application/use-cases/list-appointments-cpf-email-use-case'
-import { DrizzleAppointmentRepository } from '@/infra/db/repositories/drizzle-appointment-repository'
+import { PrismaAppointmentRepository } from '@/infra/db/repositories/prisma-appointment-repository'
+import { getPrismaClient } from '@/infra/db/prisma'
 
 function makeListAppointmentsEmailCpfUseCase() {
-  const appointmentRepository = new DrizzleAppointmentRepository()
+  const prisma = getPrismaClient()
+  const appointmentRepository = new PrismaAppointmentRepository(prisma)
   const listAppointmentsEmailCPF = new ListAppointmentsEmailCPFUseCase(
     appointmentRepository
   )

@@ -1,6 +1,6 @@
-import { FakeHasher } from 'tests/cryptography/fake-hasher'
-import { makeProvider } from 'tests/factories/make-provider'
-import { InMemoryProviderRepository } from 'tests/repositories/in-memory-provider-repository'
+import { FakeHasher } from '@test/cryptography/fake-hasher'
+import { makeProvider } from '@test/factories/make-provider'
+import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
 import { AuthenticateProviderUseCase } from './authenticate-provider-use-case'
 
 let inMemoryProviderRepository: InMemoryProviderRepository

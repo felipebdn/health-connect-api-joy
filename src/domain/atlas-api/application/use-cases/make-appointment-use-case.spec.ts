@@ -1,9 +1,9 @@
-import { makeEvent } from 'tests/factories/make-events'
-import { makeProvider } from 'tests/factories/make-provider'
-import { InMemoryAppointmentRepository } from 'tests/repositories/in-memory-appointment-repository'
-import { InMemoryEmailService } from 'tests/repositories/in-memory-email-service-repository'
-import { InMemoryEventRepository } from 'tests/repositories/in-memory-events-repository'
-import { InMemoryProviderRepository } from 'tests/repositories/in-memory-provider-repository'
+import { makeEvent } from '@test/factories/make-events'
+import { makeProvider } from '@test/factories/make-provider'
+import { InMemoryAppointmentRepository } from '@test/repositories/in-memory-appointment-repository'
+import { InMemoryEmailService } from '@test/repositories/in-memory-email-service-repository'
+import { InMemoryEventRepository } from '@test/repositories/in-memory-events-repository'
+import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
 import { MakeAppointmentUseCase } from './make-appointment-use-case'
 
 let inMemoryEmailService: InMemoryEmailService

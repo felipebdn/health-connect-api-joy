@@ -1,7 +1,7 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import { UpdateProviderUseCase } from './update-provider-use-case'
-import { makeProvider } from 'tests/factories/make-provider'
-import { InMemoryProviderRepository } from 'tests/repositories/in-memory-provider-repository'
+import { makeProvider } from '@test/factories/make-provider'
+import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
 
 let inMemoryProviderRepository: InMemoryProviderRepository
 let sut: UpdateProviderUseCase

@@ -24,7 +24,6 @@ export class AuthenticateProviderUseCase {
     data: AuthenticateProviderUseCaseRequest
   ): Promise<AuthenticateProviderUseCaseResponse> {
     const provider = await this.providerRepository.findByEmail(data.email)
-    console.log('provider', provider)
 
     if (!provider) {
       return left(new WrongCredentialsError())

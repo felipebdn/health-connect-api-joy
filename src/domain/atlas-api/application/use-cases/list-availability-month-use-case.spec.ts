@@ -1,9 +1,9 @@
-import { makeAppointment } from 'tests/factories/make-appointment'
-import { makeEvent } from 'tests/factories/make-events'
-import { makeProvider } from 'tests/factories/make-provider'
-import { InMemoryAppointmentRepository } from 'tests/repositories/in-memory-appointment-repository'
-import { InMemoryEventRepository } from 'tests/repositories/in-memory-events-repository'
-import { InMemoryProviderRepository } from 'tests/repositories/in-memory-provider-repository'
+import { makeAppointment } from '@test/factories/make-appointment'
+import { makeEvent } from '@test/factories/make-events'
+import { makeProvider } from '@test/factories/make-provider'
+import { InMemoryAppointmentRepository } from '@test/repositories/in-memory-appointment-repository'
+import { InMemoryEventRepository } from '@test/repositories/in-memory-events-repository'
+import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
 import { ListAvailabilityByMonthUseCase } from './list-availability-month-use-case'
 
 let inMemoryEventRepository: InMemoryEventRepository

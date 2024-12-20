@@ -1,7 +1,7 @@
-import { InMemoryProviderRepository } from 'tests/repositories/in-memory-provider-repository'
+import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
 import { Provider } from '../../enterprise/entities/provider'
 import { GetProviderUseCase } from './get-provider-use-case'
-import { makeProvider } from 'tests/factories/make-provider'
+import { makeProvider } from '@test/factories/make-provider'
 
 let inMemoryProviderRepository: InMemoryProviderRepository
 

@@ -5,10 +5,12 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { auth } from '../../middlewares/auth'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { ChangeDurationUseCase } from '@/domain/atlas-api/application/use-cases/change-duration-use-case'
-import { DrizzleProviderRepository } from '@/infra/db/repositories/drizzle-provider-repository'
+import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
+import { getPrismaClient } from '@/infra/db/prisma'
 
 function makeChangeDurationUseCase() {
-  const providerRepository = new DrizzleProviderRepository()
+  const prisma = getPrismaClient()
+  const providerRepository = new PrismaProviderRepository(prisma)
   const changeDurationUseCase = new ChangeDurationUseCase(providerRepository)
 
   return changeDurationUseCase
@@ -18,7 +20,7 @@ export async function ChangeDurationRouter(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
-    .patch(
+    .put(
       '/provider/:providerId/duration',
       {
         schema: {
@@ -65,7 +67,7 @@ export async function ChangeDurationRouter(app: FastifyInstance) {
               return reply.status(400).send(error.message)
           }
         }
-        return reply.status(200)
+        return reply.status(200).send()
       }
     )
 }

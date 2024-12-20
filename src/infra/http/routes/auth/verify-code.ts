@@ -1,12 +1,14 @@
 import { VerifyCodeUseCase } from '@/domain/atlas-api/application/use-cases/verify-code-use-case'
-import { DrizzleAuthCodeRepository } from '@/infra/db/repositories/drizzle-auth-code-repository'
+import { PrismaAuthCodeRepository } from '@/infra/db/repositories/prisma-auth-code-repository'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { UnauthorizedError } from '../_errors/unauthorized-error'
+import { getPrismaClient } from '@/infra/db/prisma'
 
 function makeVerifyCodeUseCase() {
-  const authCodeRepository = new DrizzleAuthCodeRepository()
+  const prisma = getPrismaClient()
+  const authCodeRepository = new PrismaAuthCodeRepository(prisma)
   return new VerifyCodeUseCase(authCodeRepository)
 }
 
@@ -16,7 +18,7 @@ export async function VerifyCodeRouter(app: FastifyInstance) {
     {
       schema: {
         tags: ['Auth'],
-        summary: 'Register a new provider.',
+        summary: 'Verify code.',
         body: z.object({
           code: z.string(),
         }),

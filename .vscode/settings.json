@@ -5,7 +5,12 @@
     "hasher",
     "MAILJS",
     "paralleldrive",
+    "pglite",
     "rrule",
     "unplugin"
-  ]
+  ],
+  "editor.formatOnSave": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
 }

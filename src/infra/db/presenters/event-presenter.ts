@@ -1,4 +1,4 @@
-import type { EventEntity } from '@/domain/atlas-api/enterprise/entities/event'
+import type { EventEntity } from "@/domain/atlas-api/enterprise/entities/event"
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class EventPresenter {
@@ -12,7 +12,7 @@ export class EventPresenter {
       StartTimezone: event.startTimezone,
       EndTimezone: event.endTimezone,
       RecurrenceRule: event.recurrenceRule,
-      RecurrenceID: event.recurrenceID?.toString(),
+      RecurrenceID: event.recurrenceID ? event.recurrenceID.toString() : undefined,
       RecurrenceException: event.recurrenceException
         ? event.recurrenceException.replace(/[:-]/g, '')
         : undefined,
@@ -31,7 +31,7 @@ export class EventPresenterWithAppointment {
       StartTimezone: event.startTimezone,
       EndTimezone: event.endTimezone,
       RecurrenceRule: event.recurrenceRule,
-      RecurrenceID: event.recurrenceID?.toString(),
+      RecurrenceID: event.recurrenceID ? event.recurrenceID.toString() : undefined,
       RecurrenceException: event.recurrenceException
         ? event.recurrenceException.replace(/[:-]/g, '')
         : undefined,

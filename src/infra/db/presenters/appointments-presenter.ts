@@ -1,4 +1,4 @@
-import type { Appointment } from '@/domain/atlas-api/enterprise/entities/appointment'
+import type { Appointment } from "@/domain/atlas-api/enterprise/entities/appointment";
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class AppointmentPresenter {

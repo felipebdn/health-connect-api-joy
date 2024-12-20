@@ -26,11 +26,16 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"suspicious": {
+				"noFocusedTests": "off"
+			}
 		}
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": ["dist/**"]
-	}	
+		"ignore": [
+			"dist/**"
+		]
+	}
 }

@@ -1,7 +1,7 @@
-import { makeProvider } from 'tests/factories/make-provider'
-import { InMemoryAppointmentRepository } from 'tests/repositories/in-memory-appointment-repository'
-import { InMemoryEventRepository } from 'tests/repositories/in-memory-events-repository'
-import { InMemoryProviderRepository } from 'tests/repositories/in-memory-provider-repository'
+import { makeProvider } from '@test/factories/make-provider'
+import { InMemoryAppointmentRepository } from '@test/repositories/in-memory-appointment-repository'
+import { InMemoryEventRepository } from '@test/repositories/in-memory-events-repository'
+import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
 import { NewEventUseCase } from './new-event-use-case'
 
 let inMemoryProviderRepository: InMemoryProviderRepository

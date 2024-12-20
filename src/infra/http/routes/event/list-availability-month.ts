@@ -2,13 +2,15 @@ import { z } from 'zod'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
-import { DrizzleEventRepository } from '@/infra/db/repositories/drizzle-events-repository'
-import { DrizzleProviderRepository } from '@/infra/db/repositories/drizzle-provider-repository'
+import { PrismaEventRepository } from '@/infra/db/repositories/prisma-events-repository'
+import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
 import { ListAvailabilityByMonthUseCase } from '@/domain/atlas-api/application/use-cases/list-availability-month-use-case'
+import { getPrismaClient } from '@/infra/db/prisma'
 
 function makeListAvailabilityByMonthUseCase() {
-  const providerRepository = new DrizzleProviderRepository()
-  const eventRepository = new DrizzleEventRepository()
+  const prisma = getPrismaClient()
+  const providerRepository = new PrismaProviderRepository(prisma)
+  const eventRepository = new PrismaEventRepository(prisma)
   return new ListAvailabilityByMonthUseCase(eventRepository, providerRepository)
 }
 

@@ -3,13 +3,15 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { ForgetPasswordUseCase } from '@/domain/atlas-api/application/use-cases/forget-password-use-case'
-import { DrizzleAuthCodeRepository } from '@/infra/db/repositories/drizzle-auth-code-repository'
-import { DrizzleProviderRepository } from '@/infra/db/repositories/drizzle-provider-repository'
+import { PrismaAuthCodeRepository } from '@/infra/db/repositories/prisma-auth-code-repository'
+import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
 import { EmailJsService } from '@/infra/email/emailjs-service'
+import { getPrismaClient } from '@/infra/db/prisma'
 
 function makeForgetPasswordUseCase() {
-  const providerRepository = new DrizzleProviderRepository()
-  const authCodeRepository = new DrizzleAuthCodeRepository()
+  const prisma = getPrismaClient()
+  const providerRepository = new PrismaProviderRepository(prisma)
+  const authCodeRepository = new PrismaAuthCodeRepository(prisma)
   const emailJsService = new EmailJsService()
   return new ForgetPasswordUseCase(
     providerRepository,

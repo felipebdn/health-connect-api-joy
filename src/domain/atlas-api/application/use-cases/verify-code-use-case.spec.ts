@@ -3,8 +3,8 @@ import { createId } from '@paralleldrive/cuid2'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 
 import { VerifyCodeUseCase } from './verify-code-use-case'
-import { makeAuthCode } from 'tests/factories/make-auth-code'
-import { InMemoryAuthCodesRepository } from 'tests/repositories/in-memory-auth-codes-repository'
+import { makeAuthCode } from '@test/factories/make-auth-code'
+import { InMemoryAuthCodesRepository } from '@test/repositories/in-memory-auth-codes-repository'
 
 let inMemoryAuthCodesRepository: InMemoryAuthCodesRepository
 let sut: VerifyCodeUseCase

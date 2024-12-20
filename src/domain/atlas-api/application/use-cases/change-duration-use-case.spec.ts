@@ -1,6 +1,6 @@
-import { InMemoryProviderRepository } from 'tests/repositories/in-memory-provider-repository'
+import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
 import { ChangeDurationUseCase } from './change-duration-use-case'
-import { makeProvider } from 'tests/factories/make-provider'
+import { makeProvider } from '@test/factories/make-provider'
 
 let inMemoryProviderRepository: InMemoryProviderRepository
 let sut: ChangeDurationUseCase

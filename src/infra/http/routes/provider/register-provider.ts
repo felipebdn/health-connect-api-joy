@@ -1,14 +1,16 @@
 import { ResourceAlreadyExistsError } from '@/core/errors/resource-already-exists-error'
 import { RegisterProviderUseCase } from '@/domain/atlas-api/application/use-cases/register-provider-use-case'
 import { BcryptHasher } from '@/infra/criptography/bcrypt-hasher'
-import { DrizzleProviderRepository } from '@/infra/db/repositories/drizzle-provider-repository'
+import { getPrismaClient } from '@/infra/db/prisma'
+import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
 import { validatorCPF } from '@/utils/cpf-validator'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 
 function makeRegisterProviderUseCase() {
-  const providerRepository = new DrizzleProviderRepository()
+  const prisma = getPrismaClient()
+  const providerRepository = new PrismaProviderRepository(prisma)
   const bcryptHasher = new BcryptHasher()
   return new RegisterProviderUseCase(providerRepository, bcryptHasher)
 }

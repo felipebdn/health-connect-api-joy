@@ -1,7 +1,7 @@
-import { MockSendEmail } from 'tests/email/mock-send-email'
-import { makeProvider } from 'tests/factories/make-provider'
-import { InMemoryAuthCodesRepository } from 'tests/repositories/in-memory-auth-codes-repository'
-import { InMemoryProviderRepository } from 'tests/repositories/in-memory-provider-repository'
+import { MockSendEmail } from '@test/email/mock-send-email'
+import { makeProvider } from '@test/factories/make-provider'
+import { InMemoryAuthCodesRepository } from '@test/repositories/in-memory-auth-codes-repository'
+import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
 import { ForgetPasswordUseCase } from './forget-password-use-case'
 
 let inMemoryProviderRepository: InMemoryProviderRepository

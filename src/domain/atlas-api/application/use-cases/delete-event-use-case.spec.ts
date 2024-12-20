@@ -1,9 +1,9 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 
 import { DeleteEventUseCase } from './delete-event-use-case'
-import { makeEvent } from 'tests/factories/make-events'
-import { InMemoryAppointmentRepository } from 'tests/repositories/in-memory-appointment-repository'
-import { InMemoryEventRepository } from 'tests/repositories/in-memory-events-repository'
+import { makeEvent } from '@test/factories/make-events'
+import { InMemoryAppointmentRepository } from '@test/repositories/in-memory-appointment-repository'
+import { InMemoryEventRepository } from '@test/repositories/in-memory-events-repository'
 
 let inMemoryEventRepository: InMemoryEventRepository
 let inMemoryAppointmentRepository: InMemoryAppointmentRepository

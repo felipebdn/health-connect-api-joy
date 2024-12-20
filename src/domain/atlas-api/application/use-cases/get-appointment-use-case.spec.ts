@@ -1,10 +1,10 @@
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 
 import { GetAppointmentUseCase } from './get-appointment-use-case'
-import { makeAppointment } from 'tests/factories/make-appointment'
-import { makeEvent } from 'tests/factories/make-events'
-import { InMemoryAppointmentRepository } from 'tests/repositories/in-memory-appointment-repository'
-import { InMemoryEventRepository } from 'tests/repositories/in-memory-events-repository'
+import { makeAppointment } from '@test/factories/make-appointment'
+import { makeEvent } from '@test/factories/make-events'
+import { InMemoryAppointmentRepository } from '@test/repositories/in-memory-appointment-repository'
+import { InMemoryEventRepository } from '@test/repositories/in-memory-events-repository'
 
 let inMemoryAppointmentRepository: InMemoryAppointmentRepository
 let inMemoryEventRepository: InMemoryEventRepository

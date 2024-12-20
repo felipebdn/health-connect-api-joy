@@ -6,10 +6,12 @@ import { auth } from '../../middlewares/auth'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { MethodInvalidError } from '@/domain/atlas-api/application/errors/method-invalid-error'
 import { EditEventUseCase } from '@/domain/atlas-api/application/use-cases/edit-event-use-case'
-import { DrizzleEventRepository } from '@/infra/db/repositories/drizzle-events-repository'
+import { PrismaEventRepository } from '@/infra/db/repositories/prisma-events-repository'
+import { getPrismaClient } from '@/infra/db/prisma'
 
 function makeEditEventUseCase() {
-  const EventRepository = new DrizzleEventRepository()
+  const prisma = getPrismaClient()
+  const EventRepository = new PrismaEventRepository(prisma)
   const editEvent = new EditEventUseCase(EventRepository)
 
   return editEvent

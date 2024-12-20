@@ -1,0 +1,83 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Provider {
+  id          String   @id @default(cuid())
+  name        String
+  email       String   @unique
+  cpf         String   @unique
+  password    String
+  phone       String
+  duration    Int
+  birthday    DateTime
+  specialty   String
+  price       Int
+  education   String?
+  description String?
+
+  events       Event[]
+  appointments Appointment[]
+  authCodes    authCodes[]
+
+  @@map("providers")
+}
+
+enum Title {
+  availability
+  appointment
+}
+
+model Event {
+  id                  String   @id @default(cuid())
+  title               Title
+  startTime           DateTime @map("start_time")
+  endTime             DateTime @map("end_time")
+  startTimezone       String   @map("start_timezone")
+  endTimezone         String   @map("end_timezone")
+  recurrenceRule      String?  @map("recurrence_rule")
+  recurrenceException String?  @map("recurrence_exception")
+  recurrenceID        String?  @map("recurrence_id")
+  providerId          String   @map("provider_id")
+
+  provider Provider @relation(fields: [providerId], references: [id])
+  event    Event?   @relation("RecurrenceRelation", fields: [recurrenceID], references: [id], onDelete: SetNull)
+
+  appointments Appointment[]
+  Event        Event[]       @relation("RecurrenceRelation")
+
+  @@map("events")
+}
+
+model authCodes {
+  id         String   @id @default(cuid())
+  code       String   @unique
+  providerId String   @map("provider_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  provider Provider @relation(fields: [providerId], references: [id])
+
+  @@map("auth-codes")
+}
+
+model Appointment {
+  id          String  @id @default(cuid())
+  name        String
+  email       String
+  cpf         String
+  phone       String
+  description String?
+  providerId  String  @map("provider_id")
+  eventId     String  @map("event_id")
+
+  provider Provider @relation(fields: [providerId], references: [id])
+  event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("appointments")
+}

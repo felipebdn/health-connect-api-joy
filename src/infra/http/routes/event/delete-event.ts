@@ -5,12 +5,14 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { auth } from '../../middlewares/auth'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { DeleteEventUseCase } from '@/domain/atlas-api/application/use-cases/delete-event-use-case'
-import { DrizzleAppointmentRepository } from '@/infra/db/repositories/drizzle-appointment-repository'
-import { DrizzleEventRepository } from '@/infra/db/repositories/drizzle-events-repository'
+import { PrismaAppointmentRepository } from '@/infra/db/repositories/prisma-appointment-repository'
+import { PrismaEventRepository } from '@/infra/db/repositories/prisma-events-repository'
+import { getPrismaClient } from '@/infra/db/prisma'
 
 function makeDeleteEventUseCase() {
-  const AppointmentRepository = new DrizzleAppointmentRepository()
-  const EventRepository = new DrizzleEventRepository()
+  const prisma = getPrismaClient()
+  const AppointmentRepository = new PrismaAppointmentRepository(prisma)
+  const EventRepository = new PrismaEventRepository(prisma)
   const deleteEvent = new DeleteEventUseCase(
     AppointmentRepository,
     EventRepository

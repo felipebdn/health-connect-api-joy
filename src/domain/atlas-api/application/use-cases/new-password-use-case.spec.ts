@@ -2,11 +2,11 @@ import { createId } from '@paralleldrive/cuid2'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 
 import { NewPasswordUseCase } from './new-password-use-case'
-import { FakeHasher } from 'tests/cryptography/fake-hasher'
-import { makeAuthCode } from 'tests/factories/make-auth-code'
-import { makeProvider } from 'tests/factories/make-provider'
-import { InMemoryAuthCodesRepository } from 'tests/repositories/in-memory-auth-codes-repository'
-import { InMemoryProviderRepository } from 'tests/repositories/in-memory-provider-repository'
+import { FakeHasher } from '@test/cryptography/fake-hasher'
+import { makeAuthCode } from '@test/factories/make-auth-code'
+import { makeProvider } from '@test/factories/make-provider'
+import { InMemoryAuthCodesRepository } from '@test/repositories/in-memory-auth-codes-repository'
+import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
 
 let inMemoryProviderRepository: InMemoryProviderRepository
 let inMemoryAuthCodesRepository: InMemoryAuthCodesRepository

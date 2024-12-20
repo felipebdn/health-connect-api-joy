@@ -1,8 +1,8 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 
 import { ListAppointmentsEmailCPFUseCase } from './list-appointments-cpf-email-use-case'
-import { makeAppointment } from 'tests/factories/make-appointment'
-import { InMemoryAppointmentRepository } from 'tests/repositories/in-memory-appointment-repository'
+import { makeAppointment } from '@test/factories/make-appointment'
+import { InMemoryAppointmentRepository } from '@test/repositories/in-memory-appointment-repository'
 
 let inMemoryAppointmentRepository: InMemoryAppointmentRepository
 let sut: ListAppointmentsEmailCPFUseCase

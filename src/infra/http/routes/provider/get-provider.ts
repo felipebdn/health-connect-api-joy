@@ -5,10 +5,12 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { ProviderPresenter } from '@/infra/db/presenters/provider-presenter'
 import { GetProviderUseCase } from '@/domain/atlas-api/application/use-cases/get-provider-use-case'
-import { DrizzleProviderRepository } from '@/infra/db/repositories/drizzle-provider-repository'
+import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
+import { getPrismaClient } from '@/infra/db/prisma'
 
 function makeGetProviderUseCase() {
-  const providerRepository = new DrizzleProviderRepository()
+  const prisma = getPrismaClient()
+  const providerRepository = new PrismaProviderRepository(prisma)
   return new GetProviderUseCase(providerRepository)
 }
 

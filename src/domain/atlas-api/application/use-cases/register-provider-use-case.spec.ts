@@ -1,9 +1,9 @@
 import { ResourceAlreadyExistsError } from '@/core/errors/resource-already-exists-error'
 
 import { RegisterProviderUseCase } from './register-provider-use-case'
-import { FakeHasher } from 'tests/cryptography/fake-hasher'
-import { makeProvider } from 'tests/factories/make-provider'
-import { InMemoryProviderRepository } from 'tests/repositories/in-memory-provider-repository'
+import { FakeHasher } from '@test/cryptography/fake-hasher'
+import { makeProvider } from '@test/factories/make-provider'
+import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
 
 let inMemoryProviderRepository: InMemoryProviderRepository
 let fakerHasher: FakeHasher

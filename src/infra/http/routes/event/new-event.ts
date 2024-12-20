@@ -4,14 +4,16 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { auth } from '../../middlewares/auth'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
-import { DrizzleEventRepository } from '@/infra/db/repositories/drizzle-events-repository'
+import { PrismaEventRepository } from '@/infra/db/repositories/prisma-events-repository'
 import { NewEventUseCase } from '@/domain/atlas-api/application/use-cases/new-event-use-case'
-import { DrizzleProviderRepository } from '@/infra/db/repositories/drizzle-provider-repository'
+import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
 import { SchedulesConflict } from '@/domain/atlas-api/application/errors/schedules-conflict-error'
+import { getPrismaClient } from '@/infra/db/prisma'
 
 function makeNewEventUseCase() {
-  const eventRepository = new DrizzleEventRepository()
-  const providerRepository = new DrizzleProviderRepository()
+  const prisma = getPrismaClient()
+  const eventRepository = new PrismaEventRepository(prisma)
+  const providerRepository = new PrismaProviderRepository(prisma)
   return new NewEventUseCase(eventRepository, providerRepository)
 }
 
@@ -58,7 +60,11 @@ export async function NewEventRouter(app: FastifyInstance) {
             case ResourceNotFoundError:
               return reply.status(404).send(error.message)
             case SchedulesConflict:
-              return reply.status(409).send('Available time shorter than the duration of the consultation.')
+              return reply
+                .status(409)
+                .send(
+                  'Available time shorter than the duration of the consultation.'
+                )
             default:
               return reply.status(400).send(error.message)
           }

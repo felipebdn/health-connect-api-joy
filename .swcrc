@@ -1,6 +1,6 @@
 {
   "$schema": "https://swc.rs/schema.json",
-  "exclude": [".spec.ts"],
+  // "exclude": [".spec.ts"],
   "jsc": {
     "parser": {
       "syntax": "typescript",

@@ -2,18 +2,20 @@ import { z } from 'zod'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
-import { DrizzleAppointmentRepository } from '@/infra/db/repositories/drizzle-appointment-repository'
-import { DrizzleEventRepository } from '@/infra/db/repositories/drizzle-events-repository'
+import { PrismaAppointmentRepository } from '@/infra/db/repositories/prisma-appointment-repository'
+import { PrismaEventRepository } from '@/infra/db/repositories/prisma-events-repository'
 import { MakeAppointmentUseCase } from '@/domain/atlas-api/application/use-cases/make-appointment-use-case'
 import { EmailJsService } from '@/infra/email/emailjs-service'
-import { DrizzleProviderRepository } from '@/infra/db/repositories/drizzle-provider-repository'
+import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
 import { EmailNotSent } from '@/domain/atlas-api/application/errors/email-not-sent'
 import { MethodInvalidError } from '@/domain/atlas-api/application/errors/method-invalid-error'
+import { getPrismaClient } from '@/infra/db/prisma'
 
 function makeMakeAppointmentUseCase() {
-  const eventRepository = new DrizzleEventRepository()
-  const appointmentRepository = new DrizzleAppointmentRepository()
-  const providerRepository = new DrizzleProviderRepository()
+  const prisma = getPrismaClient()
+  const eventRepository = new PrismaEventRepository(prisma)
+  const appointmentRepository = new PrismaAppointmentRepository(prisma)
+  const providerRepository = new PrismaProviderRepository(prisma)
   const emailService = new EmailJsService()
   return new MakeAppointmentUseCase(
     eventRepository,
@@ -69,7 +71,7 @@ export async function MakeAppointmentRouter(app: FastifyInstance) {
         }
       }
       const appointment = result.value.appointment
-      return reply.status(200).send({
+      return reply.status(201).send({
         appointment_id: appointment.id.toString(),
         event_id: appointment.eventId.toString(),
       })
