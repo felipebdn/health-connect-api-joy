@@ -4,9 +4,9 @@ import { bootstrap } from './app'
 async function main() {
   const app = await bootstrap()
 
-  app.listen({ port: env.PORT }).then(() => {
-    console.log(`Server is running on port ${env.PORT}`)
-  })
+  app
+    .listen({ port: env.PORT, host: '0.0.0.0' })
+    .then(() => console.log('HTTP server running!'))
 }
 
 main().catch((err) => {
