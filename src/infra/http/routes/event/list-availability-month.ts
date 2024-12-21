@@ -4,8 +4,8 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { PrismaEventRepository } from '@/infra/db/repositories/prisma-events-repository'
 import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
-import { ListAvailabilityByMonthUseCase } from '@/domain/atlas-api/application/use-cases/list-availability-month-use-case'
 import { getPrismaClient } from '@/infra/db/prisma'
+import { ListAvailabilityByMonthUseCase } from '@/domain/atlas-api/application/use-cases/list-availability-month-use-case'
 
 function makeListAvailabilityByMonthUseCase() {
   const prisma = getPrismaClient()
@@ -38,6 +38,7 @@ export async function ListAvailabilityByMonthRouter(app: FastifyInstance) {
       const listAvailabilityByMonth = makeListAvailabilityByMonthUseCase()
 
       const result = await listAvailabilityByMonth.execute({ ...params })
+      console.log(result.value)
 
       if (result.isLeft()) {
         const error = result.value

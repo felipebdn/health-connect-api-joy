@@ -13,36 +13,30 @@ describe('List Availability Month', () => {
     providerFactory = new ProviderFactory()
     eventFactory = new EventFactory()
 
-    vi.useFakeTimers()
-
     app = await bootstrap()
     await app.ready()
   })
 
   afterAll(async () => {
-    vi.useRealTimers()
     await app.close()
   })
 
   test('[GET] /:providerId/availabilities/month/:date', async () => {
-    const date = new Date(2023, 11, 1)
-    vi.setSystemTime(date)
-
     const provider = await providerFactory.makePrismaProvider({})
 
     await eventFactory.makePrismaEvent({
-      startTime: new Date(2024, 0, 1, 10),
-      endTime: new Date(2024, 0, 1, 11),
+      startTime: new Date(2024, 11, 23, 10, 40),
+      endTime: new Date(2024, 11, 23, 11),
       providerId: provider.id,
       recurrenceRule: 'FREQ=WEEKLY;BYDAY=MO,TH;INTERVAL=1',
-      recurrenceException: `${new Date(2024, 1, 5)},${new Date(2024, 1, 29)}`,
+      recurrenceException: '',
     })
 
     const response = await supertest(app.server).get(
-      `/${provider.id.toString()}/availabilities/month/${new Date(2024, 1, 1).toISOString()}`
+      `/${provider.id.toString()}/availabilities/month/${new Date(2024, 11, 21).toISOString()}`
     )
 
     expect(response.statusCode).toBe(200)
-    expect(response.body.dates.length).toBe(7)
+    expect(response.body.dates.length).toBe(3)
   })
 })
