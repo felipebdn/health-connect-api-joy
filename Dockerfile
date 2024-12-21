@@ -5,7 +5,7 @@ RUN npm install -g pnpm
 # Etapa de instalação de dependências
 FROM base AS dependencies
 WORKDIR /usr/src/app
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml prisma/migrations ./
 RUN pnpm install --frozen-lockfile
 
 # Etapa de build
@@ -13,6 +13,7 @@ FROM base AS build
 WORKDIR /usr/src/app
 COPY . .
 COPY --from=dependencies /usr/src/app/node_modules ./node_modules
+RUN pnpm prisma generate
 RUN pnpm build
 # Garanta que apenas dependências de produção estão disponíveis
 RUN pnpm prune --prod

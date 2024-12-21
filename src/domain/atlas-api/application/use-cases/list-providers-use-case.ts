@@ -9,12 +9,9 @@ interface ListProvidersUseCaseRequest {
   limit?: number
 }
 
-type ListProvidersUseCaseResponse = Either<
-  unknown,
-  {
-    providers: Provider[]
-  }
->
+type ListProvidersUseCaseResponse = {
+  providers: Provider[]
+}
 
 export class ListProvidersUseCase {
   constructor(private providerRepository: ProviderRepository) {}
@@ -24,6 +21,6 @@ export class ListProvidersUseCase {
   ): Promise<ListProvidersUseCaseResponse> {
     const providers = await this.providerRepository.findByFilter(data)
 
-    return right({ providers })
+    return { providers }
   }
 }

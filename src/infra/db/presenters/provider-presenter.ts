@@ -1,4 +1,4 @@
-import type { Provider } from "@/domain/atlas-api/enterprise/entities/provider";
+import type { Provider } from '@/domain/atlas-api/enterprise/entities/provider'
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class ProviderPresenter {
@@ -9,7 +9,7 @@ export class ProviderPresenter {
       email: provider.email,
       cpf: provider.cpf,
       phone: provider.phone,
-      duration: provider.duration ? provider.duration / 60 : null,
+      duration: provider.duration / 60,
       birthday: provider.birthday,
       price: provider.price,
       specialty: provider.specialty,
