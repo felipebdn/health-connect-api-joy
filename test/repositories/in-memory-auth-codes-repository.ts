@@ -1,10 +1,10 @@
 import type { AuthCodesRepository } from '@/domain/atlas-api/application/repositories/auth-codes-repository'
-import type { Code } from '@/domain/atlas-api/enterprise/entities/code'
+import type { AuthCode } from '@/domain/atlas-api/enterprise/entities/code'
 
 export class InMemoryAuthCodesRepository implements AuthCodesRepository {
-  public items: Code[] = []
+  public items: AuthCode[] = []
 
-  async findById(code: string): Promise<Code | null> {
+  async findById(code: string): Promise<AuthCode | null> {
     const authCode = this.items.find((value) => value.code === code)
     if (!authCode) {
       return null
@@ -12,7 +12,7 @@ export class InMemoryAuthCodesRepository implements AuthCodesRepository {
     return authCode
   }
 
-  async create(code: Code): Promise<void> {
+  async create(code: AuthCode): Promise<void> {
     this.items.push(code)
   }
 

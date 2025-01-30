@@ -7,14 +7,20 @@ import { PrismaAuthCodeRepository } from '@/infra/db/repositories/prisma-auth-co
 import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
 import { EmailJsService } from '@/infra/email/emailjs-service'
 import { getPrismaClient } from '@/infra/db/prisma'
+import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-instituition-repository'
+import { PrismaPatientRepository } from '@/infra/db/repositories/prisma-patient-repository'
 
 function makeForgetPasswordUseCase() {
   const prisma = getPrismaClient()
   const providerRepository = new PrismaProviderRepository(prisma)
+  const institutionRepository = new PrismaInstitutionRepository(prisma)
+  const patientRepository = new PrismaPatientRepository(prisma)
   const authCodeRepository = new PrismaAuthCodeRepository(prisma)
   const emailJsService = new EmailJsService()
   return new ForgetPasswordUseCase(
     providerRepository,
+    institutionRepository,
+    patientRepository,
     authCodeRepository,
     emailJsService
   )
@@ -32,6 +38,7 @@ export async function ForgetPasswordRouter(app: FastifyInstance) {
             message: 'Email invalid',
           }),
           url: z.string().url(),
+          entity: z.enum(['INSTITUTION', 'PROVIDER', 'PATIENT']),
         }),
         response: {
           200: z.never(),
@@ -46,6 +53,7 @@ export async function ForgetPasswordRouter(app: FastifyInstance) {
       const result = await forgetPassword.execute({
         email: body.email,
         URL_REDIRECT: body.url,
+        entity: body.entity,
       })
 
       if (result.isLeft()) {

@@ -5,21 +5,25 @@ import { makeAppointment } from '@test/factories/make-appointment'
 import { makeEvent } from '@test/factories/make-events'
 import { InMemoryAppointmentRepository } from '@test/repositories/in-memory-appointment-repository'
 import { InMemoryEventRepository } from '@test/repositories/in-memory-events-repository'
+import { InMemoryPatientRepository } from '@test/repositories/in-memory-patient-repository'
 
 let inMemoryAppointmentRepository: InMemoryAppointmentRepository
 let inMemoryEventRepository: InMemoryEventRepository
+let inMemoryPatientRepository: InMemoryPatientRepository
 let sut: GetAppointmentUseCase
 
 describe('Get Appointment', () => {
   beforeEach(() => {
     inMemoryAppointmentRepository = new InMemoryAppointmentRepository()
+    inMemoryPatientRepository = new InMemoryPatientRepository()
     inMemoryEventRepository = new InMemoryEventRepository(
       inMemoryAppointmentRepository
     )
 
     sut = new GetAppointmentUseCase(
       inMemoryAppointmentRepository,
-      inMemoryEventRepository
+      inMemoryEventRepository,
+      inMemoryPatientRepository
     )
   })
 

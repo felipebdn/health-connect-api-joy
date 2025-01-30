@@ -55,15 +55,4 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
 
     return appointments.map(PrismaAppointmentMapper.toDomain)
   }
-
-  async findByEmailOrCPF(data: {
-    email?: string
-    cpf?: string
-  }): Promise<Appointment[]> {
-    const appointments = await this.prisma.appointment.findMany({
-      where: { ...data },
-    })
-
-    return appointments.map(PrismaAppointmentMapper.toDomain)
-  }
 }

@@ -56,6 +56,7 @@ export class ListAvailabilityByMonthUseCase {
           lastDayOfMonth,
           true
         )
+        // .filter((day) => dayjs(day).isSameOrAfter(raw.startTime))
 
         if (raw.recurrenceException) {
           const datesExceptions = raw.recurrenceException

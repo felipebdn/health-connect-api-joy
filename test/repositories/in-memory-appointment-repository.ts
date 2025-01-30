@@ -46,19 +46,4 @@ export class InMemoryAppointmentRepository implements AppointmentRepository {
   async findManyByProviderId(providerId: string): Promise<Appointment[]> {
     return this.items.filter((item) => item.providerId.toValue() === providerId)
   }
-
-  async findByEmailOrCPF(data: {
-    email?: string
-    cpf?: string
-  }): Promise<Appointment[]> {
-    return this.items.filter((item) => {
-      if (data.cpf) {
-        return data.cpf === item.cpf
-      }
-      if (data.email) {
-        return data.email === item.email
-      }
-      return false
-    })
-  }
 }

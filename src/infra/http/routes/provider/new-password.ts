@@ -9,14 +9,20 @@ import { BcryptHasher } from '@/infra/criptography/bcrypt-hasher'
 import { UnauthorizedError } from '../_errors/unauthorized-error'
 import { ConflictActionError } from '@/domain/atlas-api/application/use-cases/errors/conflit-errror-action'
 import { getPrismaClient } from '@/infra/db/prisma'
+import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-instituition-repository'
+import { PrismaPatientRepository } from '@/infra/db/repositories/prisma-patient-repository'
 
 function makeNewPasswordUseCase() {
   const prisma = getPrismaClient()
   const providerRepository = new PrismaProviderRepository(prisma)
+  const prismaInstitutionRepository = new PrismaInstitutionRepository(prisma)
+  const prismaPatientRepository = new PrismaPatientRepository(prisma)
   const authCodeRepository = new PrismaAuthCodeRepository(prisma)
   const bcryptHasher = new BcryptHasher()
   return new NewPasswordUseCase(
     providerRepository,
+    prismaInstitutionRepository,
+    prismaPatientRepository,
     authCodeRepository,
     bcryptHasher,
     bcryptHasher

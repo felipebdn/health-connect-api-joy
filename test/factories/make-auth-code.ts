@@ -1,21 +1,22 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import {
-  type CodeProps,
-  Code,
+  type AuthCodeProps,
+  AuthCode,
 } from '@/domain/atlas-api/enterprise/entities/code'
 import { AuthCodeMapper } from '@/infra/db/mappers/prisma-auth-code-mapper'
 import { getPrismaClient } from '@/infra/db/prisma'
 import { createId } from '@paralleldrive/cuid2'
 
 export function makeAuthCode(
-  override?: Partial<CodeProps>,
+  override?: Partial<AuthCodeProps>,
   id?: UniqueEntityId
 ) {
-  const authCode = Code.create(
+  const authCode = AuthCode.create(
     {
       code: createId(),
-      providerId: new UniqueEntityId(),
       createdAt: new Date(),
+      entity: 'PROVIDER',
+      entityId: new UniqueEntityId(),
       ...override,
     },
     id
@@ -25,11 +26,11 @@ export function makeAuthCode(
 }
 
 export class AuthCodeFactory {
-  async makePrismaAuthCode(data: Partial<CodeProps>, id?: UniqueEntityId) {
+  async makePrismaAuthCode(data: Partial<AuthCodeProps>, id?: UniqueEntityId) {
     const prisma = getPrismaClient()
 
     const authCodeCreated = makeAuthCode(data, id)
-    await prisma.authCodes.create({
+    await prisma.authCode.create({
       data: AuthCodeMapper.toPrisma(authCodeCreated),
     })
     return authCodeCreated

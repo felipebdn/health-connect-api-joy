@@ -17,7 +17,6 @@ import { EditEventRouter } from './routes/event/edit-event'
 import { GetAppointmentRouter } from './routes/appointment/get-appointment'
 import { ForgetPasswordRouter } from './routes/auth/forget-password'
 import { GetProviderRouter } from './routes/provider/get-provider'
-import { ListAppointmentsRouter } from './routes/appointment/list-appointments'
 import { MakeAppointmentRouter } from './routes/appointment/make-appointment'
 import { VerifyCodeRouter } from './routes/auth/verify-code'
 import { ListAvailabilityDayRouter } from './routes/event/list-availability-day'
@@ -90,7 +89,6 @@ export async function bootstrap() {
   app.register(UpdateProviderRouter)
 
   app.register(GetAppointmentRouter)
-  app.register(ListAppointmentsRouter)
   app.register(MakeAppointmentRouter)
 
   app.register(fastifyJwt, {

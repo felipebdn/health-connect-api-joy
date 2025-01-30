@@ -25,10 +25,9 @@ describe('List Providers Use Case', () => {
 
     const result = await sut.execute({})
 
-    expect(result.isRight()).toBe(true)
-    if (result.isRight()) {
-      expect(result.value.providers).toHaveLength(2)
-      expect(result.value.providers).toEqual(
+    if (result) {
+      expect(result.providers).toHaveLength(2)
+      expect(result.providers).toEqual(
         expect.arrayContaining([provider1, provider2])
       )
     }
@@ -48,10 +47,9 @@ describe('List Providers Use Case', () => {
 
     const result = await sut.execute({ name: 'Fernan' })
 
-    expect(result.isRight()).toBe(true)
-    if (result.isRight()) {
-      expect(result.value.providers).toHaveLength(2)
-      expect(result.value.providers).toEqual(
+    if (result) {
+      expect(result.providers).toHaveLength(2)
+      expect(result.providers).toEqual(
         expect.arrayContaining([provider1, provider2])
       )
     }
@@ -71,10 +69,9 @@ describe('List Providers Use Case', () => {
 
     const result = await sut.execute({ specialty: 'Pediatrics' })
 
-    expect(result.isRight()).toBe(true)
-    if (result.isRight()) {
-      expect(result.value.providers).toHaveLength(1)
-      expect(result.value.providers[0]).toEqual(provider2)
+    if (result) {
+      expect(result.providers).toHaveLength(1)
+      expect(result.providers[0]).toEqual(provider2)
     }
   })
 
@@ -93,10 +90,7 @@ describe('List Providers Use Case', () => {
 
     const result = await sut.execute({ amount: 2 })
 
-    expect(result.isRight()).toBe(true)
-    if (result.isRight()) {
-      expect(result.value.providers).toHaveLength(2)
-    }
+    expect(result.providers).toHaveLength(2)
   })
 
   it('should paginate the results', async () => {
@@ -114,12 +108,8 @@ describe('List Providers Use Case', () => {
 
     const result = await sut.execute({ amount: 1, limit: 1 })
 
-    expect(result.isRight()).toBe(true)
-
-    if (result.isRight()) {
-      expect(result.value.providers).toHaveLength(1)
-      expect(result.value.providers[0]).toEqual(provider3)
-    }
+    expect(result.providers).toHaveLength(1)
+    expect(result.providers[0]).toEqual(provider3)
   })
 
   it('should return an empty list if no providers match the filters', async () => {
@@ -136,9 +126,6 @@ describe('List Providers Use Case', () => {
 
     const result = await sut.execute({ name: 'NonExistent' })
 
-    expect(result.isRight()).toBe(true)
-    if (result.isRight()) {
-      expect(result.value.providers).toHaveLength(0)
-    }
+    expect(result.providers).toHaveLength(0)
   })
 })

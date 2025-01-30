@@ -8,8 +8,4 @@ export interface AppointmentRepository {
   findById(appointmentId: string): Promise<Appointment | null>
   findByEventId(eventId: string): Promise<Appointment | null>
   findManyByProviderId(providerId: string): Promise<Appointment[]>
-  findByEmailOrCPF(data: {
-    email?: string
-    cpf?: string
-  }): Promise<Appointment[]>
 }

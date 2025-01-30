@@ -5,11 +5,14 @@ import { InMemoryEmailService } from '@test/repositories/in-memory-email-service
 import { InMemoryEventRepository } from '@test/repositories/in-memory-events-repository'
 import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
 import { MakeAppointmentUseCase } from './make-appointment-use-case'
+import { InMemoryPatientRepository } from '@test/repositories/in-memory-patient-repository'
+import { makePatient } from '@test/factories/make-patient'
 
 let inMemoryEmailService: InMemoryEmailService
 let inMemoryProviderRepository: InMemoryProviderRepository
 let inMemoryEventRepository: InMemoryEventRepository
 let inMemoryAppointmentRepository: InMemoryAppointmentRepository
+let inMemoryPatientRepository: InMemoryPatientRepository
 let sut: MakeAppointmentUseCase
 
 describe('Make a new Appointment', () => {
@@ -17,6 +20,7 @@ describe('Make a new Appointment', () => {
     inMemoryEmailService = new InMemoryEmailService()
     inMemoryProviderRepository = new InMemoryProviderRepository()
     inMemoryAppointmentRepository = new InMemoryAppointmentRepository()
+    inMemoryPatientRepository = new InMemoryPatientRepository()
     inMemoryEventRepository = new InMemoryEventRepository(
       inMemoryAppointmentRepository
     )
@@ -25,6 +29,7 @@ describe('Make a new Appointment', () => {
       inMemoryEventRepository,
       inMemoryAppointmentRepository,
       inMemoryProviderRepository,
+      inMemoryPatientRepository,
       inMemoryEmailService
     )
   })
@@ -38,13 +43,13 @@ describe('Make a new Appointment', () => {
     })
     inMemoryEventRepository.items.push(event)
 
+    const patient = makePatient({})
+    inMemoryPatientRepository.items.push(patient)
+
     const result = await sut.execute({
-      cpf: '12345678909',
-      email: 'johndoe@example.com',
       eventId: event.id.toValue(),
-      name: 'john doe',
-      phone: '12345678909',
       providerId: provider.id.toString(),
+      patientId: patient.id.toString(),
     })
 
     expect(result.isRight()).toBe(true)
@@ -65,14 +70,14 @@ describe('Make a new Appointment', () => {
     })
     inMemoryEventRepository.items.push(event)
 
+    const patient = makePatient({})
+    inMemoryPatientRepository.items.push(patient)
+
     const result = await sut.execute({
-      cpf: '12345678909',
-      email: 'johndoe@example.com',
-      eventId: event.id.toValue(),
-      name: 'john doe',
-      phone: '12345678909',
       providerId: provider.id.toString(),
       date: new Date(),
+      patientId: patient.id.toString(),
+      eventId: event.id.toString(),
     })
 
     expect(result.isRight()).toBe(true)
@@ -99,14 +104,14 @@ describe('Make a new Appointment', () => {
 
     inMemoryEventRepository.items.push(event, recurrence)
 
+    const patient = makePatient({})
+    inMemoryPatientRepository.items.push(patient)
+
     const result = await sut.execute({
-      cpf: '12345678909',
-      email: 'johndoe@example.com',
       eventId: event.id.toValue(),
-      name: 'john doe',
-      phone: '12345678909',
       providerId: provider.id.toString(),
       date: new Date(),
+      patientId: patient.id.toString(),
     })
 
     expect(result.isRight()).toBe(true)

@@ -1,14 +1,14 @@
 import { Entity } from '@/core/entities/entity'
 import type { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import type { Optional } from '@/core/types/optional'
 
 export interface AppointmentProps {
   providerId: UniqueEntityId
   eventId: UniqueEntityId
-  name: string
-  email: string
-  cpf: string
-  phone: string
+  institutionId: UniqueEntityId
+  patientId: UniqueEntityId
   description: string | null
+  createdAt: Date
 }
 
 export class Appointment extends Entity<AppointmentProps> {
@@ -20,28 +20,30 @@ export class Appointment extends Entity<AppointmentProps> {
     return this.props.eventId
   }
 
-  get name() {
-    return this.props.name
+  get institutionId() {
+    return this.props.institutionId
   }
 
-  get email() {
-    return this.props.email
+  get createdAt() {
+    return this.props.createdAt
   }
 
-  get cpf() {
-    return this.props.cpf
-  }
-
-  get phone() {
-    return this.props.phone
+  get patientId() {
+    return this.props.patientId
   }
 
   get description() {
     return this.props.description
   }
 
-  static create(props: AppointmentProps, id?: UniqueEntityId) {
-    const appointment = new Appointment(props, id)
+  static create(
+    props: Optional<AppointmentProps, 'createdAt'>,
+    id?: UniqueEntityId
+  ) {
+    const appointment = new Appointment(
+      { ...props, createdAt: props.createdAt ?? new Date() },
+      id
+    )
 
     return appointment
   }

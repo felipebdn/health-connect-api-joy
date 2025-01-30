@@ -39,7 +39,6 @@ describe('new Password', () => {
     })
     await authCodeFactory.makePrismaAuthCode({
       code,
-      providerId: provider.id,
       createdAt: new Date(2024, 7, 1, 8, 50),
     })
 
@@ -50,7 +49,7 @@ describe('new Password', () => {
       })
 
     expect(response.statusCode).toBe(200)
-    const codesInDb = await prisma.authCodes.findMany()
+    const codesInDb = await prisma.authCode.findMany()
     expect(codesInDb.length).toBe(0)
   })
 })

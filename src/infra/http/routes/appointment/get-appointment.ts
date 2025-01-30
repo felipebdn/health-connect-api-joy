@@ -8,12 +8,19 @@ import { GetAppointmentUseCase } from '@/domain/atlas-api/application/use-cases/
 import { PrismaAppointmentRepository } from '@/infra/db/repositories/prisma-appointment-repository'
 import { PrismaEventRepository } from '@/infra/db/repositories/prisma-events-repository'
 import { getPrismaClient } from '@/infra/db/prisma'
+import { PatientPresenter } from '@/infra/db/presenters/patient-presenter'
+import { PrismaPatientRepository } from '@/infra/db/repositories/prisma-patient-repository'
 
 function makeGetAppointmentUseCase() {
   const prisma = getPrismaClient()
   const appointmentRepository = new PrismaAppointmentRepository(prisma)
   const eventRepository = new PrismaEventRepository(prisma)
-  return new GetAppointmentUseCase(appointmentRepository, eventRepository)
+  const patientRepository = new PrismaPatientRepository(prisma)
+  return new GetAppointmentUseCase(
+    appointmentRepository,
+    eventRepository,
+    patientRepository
+  )
 }
 
 export async function GetAppointmentRouter(app: FastifyInstance) {
@@ -32,11 +39,18 @@ export async function GetAppointmentRouter(app: FastifyInstance) {
               id: z.string(),
               providerId: z.string(),
               eventId: z.string(),
-              name: z.string(),
-              email: z.string(),
-              cpf: z.string(),
-              phone: z.string(),
-              description: z.string().nullable(),
+              institutionId: z.string(),
+              patientId: z.string(),
+              description: z.string().optional(),
+              createdAt: z.coerce.date(),
+              patient: z.object({
+                id: z.string(),
+                name: z.string(),
+                email: z.string(),
+                phone: z.string(),
+                birthday: z.coerce.date(),
+                addressId: z.string().optional(),
+              }),
               event: z.object({
                 Id: z.string(),
                 providerId: z.string(),
@@ -73,6 +87,7 @@ export async function GetAppointmentRouter(app: FastifyInstance) {
       return reply.status(200).send({
         appointment: {
           ...AppointmentPresenter.toHTTP(result.value.appointment),
+          patient: PatientPresenter.toHTTP(result.value.patient),
           event: EventPresenter.toHTTP(result.value.event),
         },
       })

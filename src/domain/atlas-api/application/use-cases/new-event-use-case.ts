@@ -9,6 +9,7 @@ import { SchedulesConflict } from '../errors/schedules-conflict-error'
 import { type Either, left, right } from '@/core/either'
 import type { ProviderRepository } from '../repositories/provider-repository'
 import type { EventRepository } from '../repositories/recurrence-repository'
+import type { InstitutionRepository } from '../repositories/institution-repository'
 
 dayjs.extend(isSameOrBefore)
 
@@ -21,6 +22,7 @@ interface NewEventUseCaseRequest {
   endTimezone: string
   recurrenceRule?: string
   duration: number
+  institutionId: string
 }
 
 interface splitEventsProps {
@@ -37,7 +39,8 @@ type NewEventUseCaseResponse = Either<
 export class NewEventUseCase {
   constructor(
     private eventRepository: EventRepository,
-    private providerRepository: ProviderRepository
+    private providerRepository: ProviderRepository,
+    private institutionRepository: InstitutionRepository
   ) {}
 
   async execute(
@@ -47,6 +50,14 @@ export class NewEventUseCase {
 
     if (!provider) {
       return left(new ResourceNotFoundError('provider'))
+    }
+
+    const institution = await this.institutionRepository.findById(
+      data.institutionId
+    )
+
+    if (!institution) {
+      return left(new ResourceNotFoundError('institution'))
     }
 
     const diferenceTime = dayjs(data.endTime).diff(data.startTime, 'seconds')
@@ -70,6 +81,7 @@ export class NewEventUseCase {
         startTimezone: data.startTimezone,
         title: data.title,
         recurrenceRule: data.recurrenceRule,
+        institutionId: new UniqueEntityId(data.institutionId),
       })
     )
 

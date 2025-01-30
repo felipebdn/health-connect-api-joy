@@ -9,12 +9,18 @@ import { NewEventUseCase } from '@/domain/atlas-api/application/use-cases/new-ev
 import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
 import { SchedulesConflict } from '@/domain/atlas-api/application/errors/schedules-conflict-error'
 import { getPrismaClient } from '@/infra/db/prisma'
+import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-instituition-repository'
 
 function makeNewEventUseCase() {
   const prisma = getPrismaClient()
   const eventRepository = new PrismaEventRepository(prisma)
   const providerRepository = new PrismaProviderRepository(prisma)
-  return new NewEventUseCase(eventRepository, providerRepository)
+  const institutionRepository = new PrismaInstitutionRepository(prisma)
+  return new NewEventUseCase(
+    eventRepository,
+    providerRepository,
+    institutionRepository
+  )
 }
 
 export async function NewEventRouter(app: FastifyInstance) {
@@ -37,6 +43,7 @@ export async function NewEventRouter(app: FastifyInstance) {
             endTimezone: z.string(),
             recurrenceRule: z.string().optional(),
             duration: z.coerce.number(),
+            institutionId: z.string(),
           }),
           response: {
             201: z.never(),

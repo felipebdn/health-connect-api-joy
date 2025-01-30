@@ -12,16 +12,14 @@ import type { AppointmentRepository } from '../repositories/appointment-reposito
 import type { ProviderRepository } from '../repositories/provider-repository'
 import type { EventRepository } from '../repositories/recurrence-repository'
 import type { EmailService } from '../services/email'
+import type { PatientRepository } from '../repositories/patient-repository'
 
 interface MakeAppointmentUseCaseRequest {
   date?: Date
   providerId: string
   eventId: string
-  name: string
-  email: string
-  cpf: string
-  phone: string
   description?: string
+  patientId: string
 }
 
 type MakeAppointmentUseCaseResponse = Either<
@@ -34,6 +32,7 @@ export class MakeAppointmentUseCase {
     private eventRepository: EventRepository,
     private appointmentRepository: AppointmentRepository,
     private providerRepository: ProviderRepository,
+    private patientRepository: PatientRepository,
     private emailService: EmailService
   ) {}
 
@@ -42,9 +41,16 @@ export class MakeAppointmentUseCase {
   ): Promise<MakeAppointmentUseCaseResponse> {
     const event = await this.eventRepository.findById(data.eventId)
     const provider = await this.providerRepository.findById(data.providerId)
+    const patient = await this.patientRepository.findById(data.patientId)
 
-    if (!event || !provider) {
+    if (!event) {
       return left(new ResourceNotFoundError('event'))
+    }
+    if (!provider) {
+      return left(new ResourceNotFoundError('provider'))
+    }
+    if (!patient) {
+      return left(new ResourceNotFoundError('patient'))
     }
 
     /**
@@ -54,31 +60,29 @@ export class MakeAppointmentUseCase {
      */
     if (!event.recurrenceRule) {
       const appointment = Appointment.create({
-        cpf: data.cpf,
         description: data.description ?? null,
-        email: data.email,
         eventId: event.id,
-        name: data.name,
-        phone: data.phone,
         providerId: new UniqueEntityId(data.providerId),
+        institutionId: event.institutionId,
+        patientId: patient.id,
       })
 
       event.title = 'appointment'
 
-      const confirmation =
-        await this.emailService.sendMessageConfirmationAppointment({
-          action: 'Novo agendamento',
-          action_subject: 'Agendamento',
-          date: dayjs(event.startTime).format('DD/MM/YYYY'),
-          patient_email: data.email,
-          patient_name: data.name,
-          provider_email: provider.email,
-          provider_name: provider.name,
-        })
+      // const confirmation =
+      //   await this.emailService.sendMessageConfirmationAppointment({
+      //     action: 'Novo agendamento',
+      //     action_subject: 'Agendamento',
+      //     date: dayjs(event.startTime).format('DD/MM/YYYY'),
+      //     patient_email: data.email,
+      //     patient_name: data.name,
+      //     provider_email: provider.email,
+      //     provider_name: provider.name,
+      //   })
 
-      if (!confirmation) {
-        return left(new EmailNotSent())
-      }
+      // if (!confirmation) {
+      //   return left(new EmailNotSent())
+      // }
 
       await this.appointmentRepository.create(appointment)
       await this.eventRepository.save(event)
@@ -109,32 +113,31 @@ export class MakeAppointmentUseCase {
           .toDate(),
         startTimezone: event.startTimezone,
         title: 'appointment',
+        institutionId: event.institutionId,
       })
       event.recurrenceException = data.date
       const appointment = Appointment.create({
-        cpf: data.cpf,
         description: data.description ?? null,
-        email: data.email,
         eventId: newAppointmentEvent.id,
-        name: data.name,
-        phone: data.phone,
-        providerId: new UniqueEntityId(data.providerId),
+        providerId: provider.id,
+        institutionId: event.institutionId,
+        patientId: patient.id,
       })
 
-      const confirmation =
-        await this.emailService.sendMessageConfirmationAppointment({
-          action: 'Novo agendamento',
-          action_subject: 'Agendamento',
-          date: dayjs(event.startTime).format('DD/MM/YYYY'),
-          patient_email: data.email,
-          patient_name: data.name,
-          provider_email: provider.email,
-          provider_name: provider.name,
-        })
+      // const confirmation =
+      //   await this.emailService.sendMessageConfirmationAppointment({
+      //     action: 'Novo agendamento',
+      //     action_subject: 'Agendamento',
+      //     date: dayjs(event.startTime).format('DD/MM/YYYY'),
+      //     patient_email: data.email,
+      //     patient_name: data.name,
+      //     provider_email: provider.email,
+      //     provider_name: provider.name,
+      //   })
 
-      if (!confirmation) {
-        return left(new EmailNotSent())
-      }
+      // if (!confirmation) {
+      //   return left(new EmailNotSent())
+      // }
 
       await this.eventRepository.create(newAppointmentEvent)
       await this.eventRepository.save(event)
@@ -150,32 +153,30 @@ export class MakeAppointmentUseCase {
      */
     if (event.recurrenceRule && event.recurrenceID) {
       const appointment = Appointment.create({
-        cpf: data.cpf,
         description: data.description ?? null,
-        email: data.email,
         eventId: event.id,
-        name: data.name,
-        phone: data.phone,
         providerId: new UniqueEntityId(data.providerId),
+        institutionId: event.institutionId,
+        patientId: patient.id,
       })
       event.title = 'appointment'
       event.recurrenceID = undefined
       event.recurrenceException = undefined
 
-      const confirmation =
-        await this.emailService.sendMessageConfirmationAppointment({
-          action: 'Novo agendamento',
-          action_subject: 'Agendamento',
-          date: dayjs(event.startTime).format('DD/MM/YYYY'),
-          patient_email: data.email,
-          patient_name: data.name,
-          provider_email: provider.email,
-          provider_name: provider.name,
-        })
+      // const confirmation =
+      //   await this.emailService.sendMessageConfirmationAppointment({
+      //     action: 'Novo agendamento',
+      //     action_subject: 'Agendamento',
+      //     date: dayjs(event.startTime).format('DD/MM/YYYY'),
+      //     patient_email: data.email,
+      //     patient_name: data.name,
+      //     provider_email: provider.email,
+      //     provider_name: provider.name,
+      //   })
 
-      if (!confirmation) {
-        return left(new EmailNotSent())
-      }
+      // if (!confirmation) {
+      //   return left(new EmailNotSent())
+      // }
 
       await this.appointmentRepository.create(appointment)
       await this.eventRepository.save(event)

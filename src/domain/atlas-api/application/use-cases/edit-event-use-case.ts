@@ -7,6 +7,7 @@ import { MethodInvalidError } from '../errors/method-invalid-error'
 import { SchedulesConflict } from '../errors/schedules-conflict-error'
 import { type Either, left, right } from '@/core/either'
 import type { EventRepository } from '../repositories/recurrence-repository'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 
 interface EditEventUseCaseRequest {
   type: 'event' | 'recurrence'
@@ -75,6 +76,7 @@ export class EditEventUseCase {
           startTimezone: props.startTimezone,
           title: 'availability',
           recurrenceID: event.id,
+          institutionId: event.institutionId,
         })
         event.recurrenceException = props.currentStartTime
 

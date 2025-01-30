@@ -3,19 +3,23 @@ import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 
 export interface EventProps {
   title: 'availability' | 'appointment'
-  providerId: UniqueEntityId
   startTime: Date
   endTime: Date
   startTimezone: string
   endTimezone: string
   recurrenceRule?: string
-  recurrenceID?: UniqueEntityId
   recurrenceException?: string
+  recurrenceID?: UniqueEntityId
+  providerId: UniqueEntityId
+  institutionId: UniqueEntityId
 }
 
 export class EventEntity extends Entity<EventProps> {
   get providerId() {
     return this.props.providerId
+  }
+  get institutionId() {
+    return this.props.institutionId
   }
 
   get title() {
@@ -91,11 +95,7 @@ export class EventEntity extends Entity<EventProps> {
     this.props.endTimezone = timezone
   }
 
-  static create(
-    // props: Optional<EventProps, 'createdAt' | 'available'>,
-    props: EventProps,
-    id?: UniqueEntityId,
-  ) {
+  static create(props: EventProps, id?: UniqueEntityId) {
     const event = new EventEntity(props, id)
 
     return event

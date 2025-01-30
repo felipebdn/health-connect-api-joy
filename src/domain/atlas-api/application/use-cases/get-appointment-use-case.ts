@@ -4,6 +4,8 @@ import type { Appointment } from '../../enterprise/entities/appointment'
 import type { EventEntity } from '../../enterprise/entities/event'
 import type { AppointmentRepository } from '../repositories/appointment-repository'
 import type { EventRepository } from '../repositories/recurrence-repository'
+import type { PatientRepository } from '../repositories/patient-repository'
+import type { Patient } from '../../enterprise/entities/patient'
 
 interface GetAppointmentUseCaseRequest {
   eventId: string
@@ -14,13 +16,15 @@ type GetAppointmentUseCaseResponse = Either<
   {
     appointment: Appointment
     event: EventEntity
+    patient: Patient
   }
 >
 
 export class GetAppointmentUseCase {
   constructor(
     private appointmentRepository: AppointmentRepository,
-    private eventRepository: EventRepository
+    private eventRepository: EventRepository,
+    private patientRepository: PatientRepository
   ) {}
 
   async execute({
@@ -40,6 +44,14 @@ export class GetAppointmentUseCase {
       return left(new ResourceNotFoundError('event'))
     }
 
-    return right({ appointment, event })
+    const patient = await this.patientRepository.findById(
+      appointment.patientId.toValue()
+    )
+
+    if (!patient) {
+      return left(new ResourceNotFoundError('event'))
+    }
+
+    return right({ appointment, event, patient })
   }
 }

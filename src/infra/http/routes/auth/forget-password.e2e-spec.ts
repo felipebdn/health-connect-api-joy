@@ -36,7 +36,7 @@ describe('Forget Password', () => {
         url: 'http://localhost:3000',
       })
 
-    const codeAuthOnDb = await prisma.authCodes.findMany()
+    const codeAuthOnDb = await prisma.authCode.findMany()
 
     expect(response.statusCode).toBe(200)
     expect(codeAuthOnDb.length).toBe(1)

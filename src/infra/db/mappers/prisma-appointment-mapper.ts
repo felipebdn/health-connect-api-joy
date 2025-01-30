@@ -1,6 +1,6 @@
-import { UniqueEntityId } from "@/core/entities/unique-entity-id";
-import { Appointment } from "@/domain/atlas-api/enterprise/entities/appointment";
-import type { Prisma, Appointment as PrismaAppointment } from "@prisma/client";
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { Appointment } from '@/domain/atlas-api/enterprise/entities/appointment'
+import type { Prisma, Appointment as PrismaAppointment } from '@prisma/client'
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class PrismaAppointmentMapper {
@@ -9,27 +9,23 @@ export class PrismaAppointmentMapper {
       {
         providerId: new UniqueEntityId(raw.providerId),
         eventId: new UniqueEntityId(raw.eventId),
-        cpf: raw.cpf,
-        email: raw.email,
-        name: raw.name,
-        phone: raw.phone,
         description: raw.description,
+        institutionId: new UniqueEntityId(raw.institutionId),
+        patientId: new UniqueEntityId(raw.patientId),
       },
-      new UniqueEntityId(raw.id),
+      new UniqueEntityId(raw.id)
     )
   }
   static toPrisma(
-    appointment: Appointment,
+    appointment: Appointment
   ): Prisma.AppointmentUncheckedCreateInput {
     return {
       id: appointment.id.toValue(),
       providerId: appointment.providerId.toValue(),
       eventId: appointment.eventId.toValue(),
-      cpf: appointment.cpf,
-      email: appointment.email,
-      name: appointment.name,
-      phone: appointment.phone,
       description: appointment.description,
+      institutionId: appointment.institutionId.toValue(),
+      patientId: appointment.patientId.toValue(),
     }
   }
 }

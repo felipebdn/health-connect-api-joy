@@ -10,17 +10,20 @@ import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provide
 import { EmailNotSent } from '@/domain/atlas-api/application/errors/email-not-sent'
 import { MethodInvalidError } from '@/domain/atlas-api/application/errors/method-invalid-error'
 import { getPrismaClient } from '@/infra/db/prisma'
+import { PrismaPatientRepository } from '@/infra/db/repositories/prisma-patient-repository'
 
 function makeMakeAppointmentUseCase() {
   const prisma = getPrismaClient()
   const eventRepository = new PrismaEventRepository(prisma)
   const appointmentRepository = new PrismaAppointmentRepository(prisma)
   const providerRepository = new PrismaProviderRepository(prisma)
+  const patientRepository = new PrismaPatientRepository(prisma)
   const emailService = new EmailJsService()
   return new MakeAppointmentUseCase(
     eventRepository,
     appointmentRepository,
     providerRepository,
+    patientRepository,
     emailService
   )
 }
@@ -35,11 +38,8 @@ export async function MakeAppointmentRouter(app: FastifyInstance) {
         body: z.object({
           providerId: z.string(),
           eventId: z.string(),
+          patientId: z.string(),
           date: z.coerce.date().optional(),
-          name: z.string(),
-          email: z.string(),
-          cpf: z.string(),
-          phone: z.string(),
           description: z.string().optional(),
         }),
         response: {

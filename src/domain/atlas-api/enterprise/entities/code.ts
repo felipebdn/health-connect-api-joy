@@ -2,27 +2,35 @@ import { Entity } from '@/core/entities/entity'
 import type { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import type { Optional } from '@/core/types/optional'
 
-export interface CodeProps {
-  providerId: UniqueEntityId
+export interface AuthCodeProps {
   code: string
   createdAt: Date
+  entity: 'INSTITUTION' | 'PATIENT' | 'PROVIDER'
+  entityId: UniqueEntityId
 }
 
-export class Code extends Entity<CodeProps> {
-  get providerId() {
-    return this.props.providerId
-  }
-
+export class AuthCode extends Entity<AuthCodeProps> {
   get code() {
     return this.props.code
+  }
+
+  get entity() {
+    return this.props.entity
+  }
+
+  get entityId() {
+    return this.props.entityId
   }
 
   get createdAt() {
     return this.props.createdAt
   }
 
-  static create(props: Optional<CodeProps, 'createdAt'>, id?: UniqueEntityId) {
-    const code = new Code(
+  static create(
+    props: Optional<AuthCodeProps, 'createdAt'>,
+    id?: UniqueEntityId
+  ) {
+    const code = new AuthCode(
       {
         ...props,
         createdAt: props.createdAt ?? new Date(),

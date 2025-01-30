@@ -14,11 +14,10 @@ export function makeAppointment(
   const appointment = Appointment.create(
     {
       eventId: new UniqueEntityId(),
-      cpf: '12345678909',
+      institutionId: new UniqueEntityId(),
+      patientId: new UniqueEntityId(),
+      createdAt: new Date(),
       description: faker.person.bio(),
-      email: faker.internet.email(),
-      name: faker.person.fullName(),
-      phone: faker.phone.number(),
       providerId: new UniqueEntityId(),
       ...override,
     },

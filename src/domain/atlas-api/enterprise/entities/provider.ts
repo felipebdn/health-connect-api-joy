@@ -9,10 +9,11 @@ export interface ProviderProps {
   phone: string
   duration: number
   birthday: Date
-  price: number
   specialty: string
+  price: number
   education?: string
   description?: string
+  addressId?: string
 }
 
 export class Provider extends Entity<ProviderProps> {
@@ -52,12 +53,16 @@ export class Provider extends Entity<ProviderProps> {
     return this.props.specialty
   }
 
-  get education(): string | undefined {
+  get education() {
     return this.props.education
   }
 
-  get description(): string | undefined {
+  get description() {
     return this.props.description
+  }
+
+  get addressId() {
+    return this.props.addressId
   }
 
   set duration(duration: number) {

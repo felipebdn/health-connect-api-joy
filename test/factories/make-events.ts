@@ -15,6 +15,7 @@ export function makeEvent(override?: Partial<EventProps>, id?: UniqueEntityId) {
       endTimezone: 'America/Sao_Paulo',
       startTimezone: 'America/Sao_Paulo',
       title: 'availability',
+      institutionId: new UniqueEntityId(),
       ...override,
     },
     id

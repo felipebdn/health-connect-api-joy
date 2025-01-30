@@ -21,12 +21,81 @@ model Provider {
   price       Int
   education   String?
   description String?
+  addressId   String?  @map("address_id")
+
+  address Address? @relation(fields: [addressId], references: [id])
 
   events       Event[]
   appointments Appointment[]
-  authCodes    authCodes[]
+  institutions ProviderInstitution[]
 
   @@map("providers")
+}
+
+model Institution {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  cnpj      String?
+  phone     String?  @unique
+  addressId String?  @map("address_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  address Address? @relation(fields: [addressId], references: [id])
+
+  providers    ProviderInstitution[]
+  appointments Appointment[]
+  events       Event[]
+
+  @@map("institutions")
+}
+
+model ProviderInstitution {
+  providerId    String   @map("provider_id")
+  institutionId String   @map("institution_id")
+  enrolledAt    DateTime @default(now())
+
+  provider    Provider    @relation(fields: [providerId], references: [id])
+  institution Institution @relation(fields: [institutionId], references: [id])
+
+  @@id([providerId, institutionId])
+  @@map("provider_institution")
+}
+
+model Address {
+  id         String   @id @default(cuid())
+  street     String
+  number     String?
+  district   String
+  complement String?
+  zipCode    String   @map("zip_code")
+  city       String
+  state      String
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  patients     Patient[]
+  institutions Institution[]
+  providers    Provider[]
+
+  @@map("addresses")
+}
+
+model Patient {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  cpf       String   @unique
+  password  String
+  phone     String
+  birthday  DateTime
+  addressId String?  @map("address_id")
+
+  address Address? @relation(fields: [addressId], references: [id])
+
+  appointments Appointment[]
+
+  @@map("patients")
 }
 
 enum Title {
@@ -45,9 +114,11 @@ model Event {
   recurrenceException String?  @map("recurrence_exception")
   recurrenceID        String?  @map("recurrence_id")
   providerId          String   @map("provider_id")
+  institutionId       String   @map("institution_id")
 
-  provider Provider @relation(fields: [providerId], references: [id])
-  event    Event?   @relation("RecurrenceRelation", fields: [recurrenceID], references: [id], onDelete: SetNull)
+  institution Institution @relation(fields: [institutionId], references: [id])
+  provider    Provider    @relation(fields: [providerId], references: [id])
+  event       Event?      @relation("RecurrenceRelation", fields: [recurrenceID], references: [id], onDelete: SetNull)
 
   appointments Appointment[]
   Event        Event[]       @relation("RecurrenceRelation")
@@ -55,29 +126,36 @@ model Event {
   @@map("events")
 }
 
-model authCodes {
-  id         String   @id @default(cuid())
-  code       String   @unique
-  providerId String   @map("provider_id")
-  createdAt  DateTime @default(now()) @map("created_at")
+enum EntityEnumAuthCode {
+  INSTITUTION
+  PATIENT
+  PROVIDER
+}
 
-  provider Provider @relation(fields: [providerId], references: [id])
+model AuthCode {
+  id        String             @id @default(cuid())
+  code      String             @unique
+  entity    EntityEnumAuthCode
+  entityId  String
+  createdAt DateTime           @default(now()) @map("created_at")
 
   @@map("auth-codes")
 }
 
 model Appointment {
-  id          String  @id @default(cuid())
-  name        String
-  email       String
-  cpf         String
-  phone       String
-  description String?
-  providerId  String  @map("provider_id")
-  eventId     String  @map("event_id")
+  id            String  @id @default(cuid())
+  description   String?
+  providerId    String  @map("provider_id")
+  eventId       String  @map("event_id")
+  institutionId String  @map("institution_id")
+  patientId     String  @map("patient_id")
 
-  provider Provider @relation(fields: [providerId], references: [id])
-  event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+  provider    Provider    @relation(fields: [providerId], references: [id])
+  event       Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  Patient     Patient     @relation(fields: [patientId], references: [id])
 
   @@map("appointments")
 }
