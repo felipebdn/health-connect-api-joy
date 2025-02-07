@@ -1,7 +1,9 @@
 import { WrongCredentialsError } from '@/domain/atlas-api/application/errors/wrong-credentials-error'
-import { AuthenticateProviderUseCase } from '@/domain/atlas-api/application/use-cases/authenticate-provider-use-case'
+import { AuthenticateUseCase } from '@/domain/atlas-api/application/use-cases/authenticate-provider-use-case'
 import { BcryptHasher } from '@/infra/criptography/bcrypt-hasher'
 import { getPrismaClient } from '@/infra/db/prisma'
+import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-instituition-repository'
+import { PrismaPatientRepository } from '@/infra/db/repositories/prisma-patient-repository'
 import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
@@ -10,9 +12,13 @@ import z from 'zod'
 function makeAuthenticateUseCase() {
   const prisma = getPrismaClient()
   const providerRepository = new PrismaProviderRepository(prisma)
+  const institutionRepository = new PrismaInstitutionRepository(prisma)
+  const patientRepository = new PrismaPatientRepository(prisma)
   const bcryptHasher = new BcryptHasher()
-  const authenticateUseCase = new AuthenticateProviderUseCase(
+  const authenticateUseCase = new AuthenticateUseCase(
     providerRepository,
+    institutionRepository,
+    patientRepository,
     bcryptHasher
   )
 
@@ -21,7 +27,7 @@ function makeAuthenticateUseCase() {
 
 export async function AuthenticateRouter(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
-    '/session/provider',
+    '/session',
     {
       schema: {
         tags: ['Auth'],
@@ -31,6 +37,7 @@ export async function AuthenticateRouter(app: FastifyInstance) {
           password: z.string().min(1, {
             message: 'Password is not empty.',
           }),
+          type: z.enum(['PATIENT', 'INSTITUTION', 'PROVIDER']),
         }),
         response: {
           200: z.object({
@@ -44,7 +51,7 @@ export async function AuthenticateRouter(app: FastifyInstance) {
     async ({ body }, reply) => {
       const authenticateUseCase = makeAuthenticateUseCase()
 
-      const result = await authenticateUseCase.execute({
+      const result = await authenticateUseCase.execute(body.type, {
         email: body.email,
         password: body.password,
       })
@@ -63,7 +70,8 @@ export async function AuthenticateRouter(app: FastifyInstance) {
 
       const accessToken = await reply.jwtSign(
         {
-          sub: result.value.provider.id.toString(),
+          sub: result.value.user.id.toString(),
+          rule: body.type,
         },
         {
           sign: { expiresIn: '7d' },

@@ -1,20 +1,28 @@
 import { FakeHasher } from '@test/cryptography/fake-hasher'
 import { makeProvider } from '@test/factories/make-provider'
 import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
-import { AuthenticateProviderUseCase } from './authenticate-provider-use-case'
+import { InMemoryInstitutionRepository } from '@test/repositories/in-memory-institution-repository'
+import { InMemoryPatientRepository } from '@test/repositories/in-memory-patient-repository'
+import { AuthenticateUseCase } from './authenticate-provider-use-case'
 
 let inMemoryProviderRepository: InMemoryProviderRepository
+let inMemoryInstitutionRepository: InMemoryInstitutionRepository
+let inMemoryPatientRepository: InMemoryPatientRepository
 let fakeHasher: FakeHasher
 
-let sut: AuthenticateProviderUseCase
+let sut: AuthenticateUseCase
 
 describe('Authenticate Student', () => {
   beforeEach(() => {
     inMemoryProviderRepository = new InMemoryProviderRepository()
+    inMemoryInstitutionRepository = new InMemoryInstitutionRepository()
+    inMemoryPatientRepository = new InMemoryPatientRepository()
     fakeHasher = new FakeHasher()
 
-    sut = new AuthenticateProviderUseCase(
+    sut = new AuthenticateUseCase(
       inMemoryProviderRepository,
+      inMemoryInstitutionRepository,
+      inMemoryPatientRepository,
       fakeHasher
     )
   })
@@ -27,7 +35,7 @@ describe('Authenticate Student', () => {
 
     inMemoryProviderRepository.items.push(student)
 
-    const result = await sut.execute({
+    const result = await sut.execute('PROVIDER', {
       email: 'johndoe@example.com',
       password: '123456',
     })

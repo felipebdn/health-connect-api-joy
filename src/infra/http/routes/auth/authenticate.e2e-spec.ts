@@ -19,15 +19,16 @@ describe('Authenticate Provider', () => {
     await app.close()
   })
 
-  test('[POST] /session/provider', async () => {
+  test('[POST] /session', async () => {
     await providerFactory.makePrismaProvider({
       email: 'johndoe@example.com',
       password: await hash('123456', 8),
     })
 
-    const response = await request(app.server).post('/session/provider').send({
+    const response = await request(app.server).post('/session').send({
       email: 'johndoe@example.com',
       password: '123456',
+      type: 'PROVIDER',
     })
 
     expect(response.statusCode).toBe(200)
