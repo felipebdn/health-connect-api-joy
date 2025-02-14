@@ -39,30 +39,27 @@ export class ForgetPasswordUseCase {
   }: ResetPasswordUseCaseRequest): Promise<ResetPasswordUseCaseResponse> {
     let entityId = ''
 
-    if (entity === 'INSTITUTION') {
-      const institution = await this.institutionRepository.findByEmail(email)
-
-      if (!institution) {
-        return left(new ResourceNotFoundError('institution'))
+    switch (entity) {
+      case 'INSTITUTION': {
+        const institution = await this.institutionRepository.findByEmail(email)
+        if (!institution) return left(new ResourceNotFoundError('institution'))
+        entityId = institution.id.toString()
+        break
       }
-
-      entityId = institution.id.toString()
-    } else if (entity === 'PATIENT') {
-      const patient = await this.patientRepository.findByEmail(email)
-
-      if (!patient) {
-        return left(new ResourceNotFoundError('patient'))
+      case 'PATIENT': {
+        const patient = await this.patientRepository.findByEmail(email)
+        if (!patient) return left(new ResourceNotFoundError('patient'))
+        entityId = patient.id.toString()
+        break
       }
-
-      entityId = patient.id.toString()
-    } else if (entity === 'PROVIDER') {
-      const provider = await this.providerRepository.findByEmail(email)
-
-      if (!provider) {
-        return left(new ResourceNotFoundError('provider'))
+      case 'PROVIDER': {
+        const provider = await this.providerRepository.findByEmail(email)
+        if (!provider) return left(new ResourceNotFoundError('provider'))
+        entityId = provider.id.toString()
+        break
       }
-
-      entityId = provider.id.toString()
+      default:
+        break
     }
 
     const code = createId()
@@ -80,9 +77,7 @@ export class ForgetPasswordUseCase {
       recovery_code: authLink.toString(),
       recovery_email: email,
     })
-    if (sendEmailResult) {
-      await this.authCodesRepository.create(authCode)
-    }
+    if (sendEmailResult) await this.authCodesRepository.create(authCode)
 
     return right({})
   }

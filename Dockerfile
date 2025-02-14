@@ -5,7 +5,7 @@ RUN npm install -g pnpm
 # Etapa de instalação de dependências
 FROM base AS dependencies
 WORKDIR /usr/src/app
-COPY package.json pnpm-lock.yaml prisma/migrations ./
+COPY package.json pnpm-lock.yaml prisma ./
 RUN pnpm install --frozen-lockfile
 
 # Etapa de build

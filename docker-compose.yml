@@ -1,7 +1,12 @@
 name: atlas-api
 
+networks:
+  mynetwork:
+    driver: bridge
+
 services:
   pg:
+    container_name: db-nest-saude
     image: bitnami/postgresql:17.0.0
     ports:
       - '5432:5432'
@@ -9,3 +14,44 @@ services:
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=docker
       - POSTGRES_DB=atlasdb
+    networks:
+      - mynetwork
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 5s
+      retries: 5
+      start_period: 15s
+      timeout: 5s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      pg:
+        condition: service_healthy
+    ports:
+      - "3333:3333"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgres://docker:docker@db-nest-saude:5432/atlasdb
+    networks:
+      - mynetwork
+    command: >
+      sh -c "pnpm run start"
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dependencies
+    depends_on:
+      pg:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgres://docker:docker@db-nest-saude:5432/atlasdb
+    networks:
+      - mynetwork
+    command: >
+      sh -c "pnpm run migrate"  # Altere para o comando de migration que você usa no projeto
