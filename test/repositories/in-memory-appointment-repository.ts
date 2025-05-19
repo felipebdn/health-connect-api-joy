@@ -4,6 +4,10 @@ import type { Appointment } from '@/domain/atlas-api/enterprise/entities/appoint
 export class InMemoryAppointmentRepository implements AppointmentRepository {
   public items: Appointment[] = []
 
+  async getAll(): Promise<Appointment[]> {
+    return this.items
+  }
+
   async create(appointment: Appointment): Promise<void> {
     this.items.push(appointment)
   }

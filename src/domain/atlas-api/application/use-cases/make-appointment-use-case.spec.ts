@@ -21,9 +21,7 @@ describe('Make a new Appointment', () => {
     inMemoryProviderRepository = new InMemoryProviderRepository()
     inMemoryAppointmentRepository = new InMemoryAppointmentRepository()
     inMemoryPatientRepository = new InMemoryPatientRepository()
-    inMemoryEventRepository = new InMemoryEventRepository(
-      inMemoryAppointmentRepository
-    )
+    inMemoryEventRepository = new InMemoryEventRepository()
 
     sut = new MakeAppointmentUseCase(
       inMemoryEventRepository,

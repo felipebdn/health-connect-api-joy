@@ -11,7 +11,7 @@ export interface EventProps {
   recurrenceException?: string
   recurrenceID?: UniqueEntityId
   providerId: UniqueEntityId
-  institutionId: UniqueEntityId
+  institutionId?: UniqueEntityId
 }
 
 export class EventEntity extends Entity<EventProps> {
@@ -93,6 +93,10 @@ export class EventEntity extends Entity<EventProps> {
 
   set endTimezone(timezone: string) {
     this.props.endTimezone = timezone
+  }
+
+  set institutionId(id: UniqueEntityId | undefined) {
+    this.props.institutionId = id
   }
 
   static create(props: EventProps, id?: UniqueEntityId) {

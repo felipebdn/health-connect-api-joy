@@ -9,7 +9,9 @@ export class PrismaEventMapper {
     return EventEntity.create(
       {
         endTime: raw.endTime,
-        institutionId: new UniqueEntityId(raw.institutionId),
+        institutionId: raw.institutionId
+          ? new UniqueEntityId(raw.institutionId)
+          : undefined,
         endTimezone: raw.endTimezone,
         providerId: new UniqueEntityId(raw.providerId),
         startTime: raw.startTime,
@@ -37,7 +39,7 @@ export class PrismaEventMapper {
       recurrenceException: event.recurrenceException,
       recurrenceID: event.recurrenceID?.toValue(),
       recurrenceRule: event.recurrenceRule,
-      institutionId: event.institutionId.toValue(),
+      institutionId: event.institutionId ? event.institutionId.toValue() : null,
     }
   }
 }

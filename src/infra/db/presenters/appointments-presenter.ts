@@ -7,7 +7,9 @@ export class AppointmentPresenter {
       id: appointment.id.toString(),
       providerId: appointment.providerId.toString(),
       eventId: appointment.eventId.toString(),
-      institutionId: appointment.institutionId.toString(),
+      institutionId: appointment.institutionId
+        ? appointment.institutionId.toString()
+        : undefined,
       patientId: appointment.patientId.toString(),
       description: appointment.description ?? undefined,
       createdAt: appointment.createdAt,

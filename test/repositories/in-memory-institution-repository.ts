@@ -23,6 +23,13 @@ export class InMemoryInstitutionRepository implements InstitutionRepository {
     }
     return institution
   }
+  async findByCNPJ(cnpj: string): Promise<Institution | null> {
+    const institution = this.items.find((item) => item.cnpj === cnpj)
+    if (!institution) {
+      return null
+    }
+    return institution
+  }
   async findByPhone(phone: string): Promise<Institution | null> {
     const institution = this.items.find((item) => item.phone === phone)
     if (!institution) {

@@ -2,16 +2,26 @@ import { InMemoryProviderRepository } from '@test/repositories/in-memory-provide
 import { Provider } from '../../enterprise/entities/provider'
 import { GetProviderUseCase } from './get-provider-use-case'
 import { makeProvider } from '@test/factories/make-provider'
+import { InMemoryAddressRepository } from '@test/repositories/in-memory-address-repository'
+import { InMemoryRatingRepository } from '@test/repositories/in-memory-rating-repository'
 
 let inMemoryProviderRepository: InMemoryProviderRepository
+let inMemoryAddressRepository: InMemoryAddressRepository
+let inMemoryRatingRepository: InMemoryRatingRepository
 
 let sut: GetProviderUseCase
 
 describe('Get Provider', () => {
   beforeEach(() => {
     inMemoryProviderRepository = new InMemoryProviderRepository()
+    inMemoryAddressRepository = new InMemoryAddressRepository()
+    inMemoryRatingRepository = new InMemoryRatingRepository()
 
-    sut = new GetProviderUseCase(inMemoryProviderRepository)
+    sut = new GetProviderUseCase(
+      inMemoryProviderRepository,
+      inMemoryAddressRepository,
+      inMemoryRatingRepository
+    )
   })
 
   it('should be able to get provider', async () => {

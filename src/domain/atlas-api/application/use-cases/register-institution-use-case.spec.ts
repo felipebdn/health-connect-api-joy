@@ -5,18 +5,22 @@ import { makeProvider } from '@test/factories/make-provider'
 import { InMemoryInstitutionRepository } from '@test/repositories/in-memory-institution-repository'
 import { RegisterInstitutionUseCase } from './register-institution-use-case'
 import { makeInstitution } from '@test/factories/make-institution'
+import { InMemoryAddressRepository } from '@test/repositories/in-memory-address-repository'
 
 let inMemoryInstitutionRepository: InMemoryInstitutionRepository
+let inMemoryAddressRepository: InMemoryAddressRepository
 let fakerHasher: FakeHasher
 let sut: RegisterInstitutionUseCase
 
 describe('Register Institution', () => {
   beforeEach(() => {
     inMemoryInstitutionRepository = new InMemoryInstitutionRepository()
+    inMemoryAddressRepository = new InMemoryAddressRepository()
     fakerHasher = new FakeHasher()
 
     sut = new RegisterInstitutionUseCase(
       inMemoryInstitutionRepository,
+      inMemoryAddressRepository,
       fakerHasher
     )
   })
@@ -27,6 +31,15 @@ describe('Register Institution', () => {
       email: 'johndoe@example.com',
       password: '123456',
       phone: '99999999999',
+      cnpj: '42348274923',
+      institutionName: 'example',
+      address: {
+        city: 'example',
+        district: 'example',
+        state: 'example',
+        street: 'example',
+        zipCode: '0000000',
+      },
     })
 
     expect(result.isRight()).toBe(true)
@@ -39,6 +52,15 @@ describe('Register Institution', () => {
       email: 'johndoe@example.com',
       password: '123456',
       phone: '99999999999',
+      cnpj: '42348274923',
+      institutionName: 'example',
+      address: {
+        city: 'example',
+        district: 'example',
+        state: 'example',
+        street: 'example',
+        zipCode: '0000000',
+      },
     })
     const hashedPassword = await fakerHasher.hash('123456')
 
@@ -60,6 +82,15 @@ describe('Register Institution', () => {
       email: 'johndoe@example.com',
       password: '123456',
       phone: '99999999959',
+      cnpj: '42348274923',
+      institutionName: 'example',
+      address: {
+        city: 'example',
+        district: 'example',
+        state: 'example',
+        street: 'example',
+        zipCode: '0000000',
+      },
     })
 
     expect(result1.isLeft()).toBe(true)
@@ -70,6 +101,15 @@ describe('Register Institution', () => {
       email: 'johndoe@example.com',
       phone: '99999999998',
       password: '123456',
+      cnpj: '42348274923',
+      institutionName: 'example',
+      address: {
+        city: 'example',
+        district: 'example',
+        state: 'example',
+        street: 'example',
+        zipCode: '0000000',
+      },
     })
 
     expect(result2.isLeft()).toBe(true)
@@ -80,6 +120,15 @@ describe('Register Institution', () => {
       email: 'johndoe@example.com',
       phone: '99999999999',
       password: '123456',
+      cnpj: '42348274923',
+      institutionName: 'example',
+      address: {
+        city: 'example',
+        district: 'example',
+        state: 'example',
+        street: 'example',
+        zipCode: '0000000',
+      },
     })
 
     expect(result3.isLeft()).toBe(true)

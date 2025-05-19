@@ -22,6 +22,7 @@ describe('Update Provider', () => {
       name: 'john doe',
       phone: '99999999999',
       duration: 60,
+      occupation: 'medic',
       price: 4.5,
       birthday: new Date(),
       specialty: 'general clinic',

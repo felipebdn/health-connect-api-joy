@@ -1,4 +1,4 @@
-import { fastify } from 'fastify'
+import { fastify, type FastifyReply, type FastifyRequest } from 'fastify'
 import fastifyCors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
 import {
@@ -13,22 +13,39 @@ import { env } from '@/env'
 import { AuthenticateRouter } from './routes/auth/authenticate'
 import { ChangeDurationRouter } from './routes/provider/change-duration'
 import { DeleteEventRouter } from './routes/event/delete-event'
-import { EditEventRouter } from './routes/event/edit-event'
-import { GetAppointmentRouter } from './routes/appointment/get-appointment'
-import { ForgetPasswordRouter } from './routes/auth/forget-password'
 import { GetProviderRouter } from './routes/provider/get-provider'
-import { MakeAppointmentRouter } from './routes/appointment/make-appointment'
 import { VerifyCodeRouter } from './routes/auth/verify-code'
+import { NewPasswordRouter } from './routes/provider/new-password'
+import { RegisterProviderRouter } from './routes/provider/register-provider'
+import { UpdateProviderRouter } from './routes/provider/update-provider'
+import { RegisterInstitutionRouter } from './routes/institution/register-provider'
+import { RegisterPatientRouter } from './routes/patient/register-patient'
+import { GetUserRouter } from './routes/auth/get-user'
+import { ForgetPasswordRouter } from './routes/auth/forget-password'
+import { EditEventRouter } from './routes/event/edit-event'
 import { ListAvailabilityDayRouter } from './routes/event/list-availability-day'
 import { ListAvailabilityByMonthRouter } from './routes/event/list-availability-month'
 import { ListEventsProviderRouter } from './routes/event/list-events-provider'
 import { NewEventRouter } from './routes/event/new-event'
-import { NewPasswordRouter } from './routes/provider/new-password'
-import { RegisterProviderRouter } from './routes/provider/register-provider'
-import { UpdateProviderRouter } from './routes/provider/update-provider'
+import { GetAppointmentRouter } from './routes/appointment/get-appointment'
+import { MakeAppointmentRouter } from './routes/appointment/make-appointment'
+import fastifyCookie from '@fastify/cookie'
+import { ListAppointmentsRouter } from './routes/appointment/list-appointment-day'
+import { LogoutRoute } from './routes/auth/logout'
+import { listProviders } from './routes/provider/list-providers'
+import { NewRatingRouter } from './routes/rating/make-rating'
+import { RegisterAddressRouter } from './routes/address/register-address'
+import { GetAddressRouter } from './routes/via-cep/get-address'
+import { UpdateAddressRouter } from './routes/address/update-address'
+import { listProvidersByInstitution } from './routes/institution/list-providers-by-institution'
+import { ListAffiliationRouter } from './routes/affiliation/list-affiliation'
+import { EditAffiliationRouter } from './routes/affiliation/edit-affiliation'
+import { DeleteAffiliationRouter } from './routes/affiliation/delete-affiliation'
+import { listAvailabilitiesByInstitution } from './routes/institution/list-availabilities-by-institution'
 
 export async function bootstrap() {
-  const app = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
+  const app = fastify().withTypeProvider<ZodTypeProvider>()
+  // const app = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
 
   app.setSerializerCompiler(serializerCompiler)
   app.setValidatorCompiler(validatorCompiler)
@@ -71,10 +88,41 @@ export async function bootstrap() {
     credentials: true,
   })
 
+  app.register(fastifyJwt, {
+    secret: env.JWT_SECRET_KEY,
+    cookie: {
+      cookieName: 'atlas.access_token',
+      signed: false,
+    },
+  })
+
+  app.register(fastifyCookie)
+
+  app.decorate(
+    'authenticate',
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const token = request.cookies['atlas.access_token']
+
+      if (!token) {
+        reply.status(401).send({ message: 'Unauthorized' })
+      } else {
+        try {
+          await request.jwtVerify()
+        } catch (err) {
+          reply.status(401).send({ message: 'Unauthorized' })
+        }
+      }
+    }
+  )
+
+  // auth
   app.register(AuthenticateRouter)
+  app.register(GetUserRouter)
   app.register(ForgetPasswordRouter)
   app.register(VerifyCodeRouter)
+  app.register(LogoutRoute)
 
+  // event
   app.register(DeleteEventRouter)
   app.register(EditEventRouter)
   app.register(ListAvailabilityDayRouter)
@@ -82,18 +130,41 @@ export async function bootstrap() {
   app.register(ListEventsProviderRouter)
   app.register(NewEventRouter)
 
+  //provider
   app.register(ChangeDurationRouter)
   app.register(GetProviderRouter)
   app.register(NewPasswordRouter)
   app.register(RegisterProviderRouter)
   app.register(UpdateProviderRouter)
+  app.register(listProviders)
 
+  // appointment
   app.register(GetAppointmentRouter)
   app.register(MakeAppointmentRouter)
+  app.register(ListAppointmentsRouter)
 
-  app.register(fastifyJwt, {
-    secret: env.JWT_SECRET_KEY,
-  })
+  // institution
+  app.register(RegisterInstitutionRouter)
+  app.register(listProvidersByInstitution)
+  app.register(listAvailabilitiesByInstitution)
+
+  // patient
+  app.register(RegisterPatientRouter)
+
+  // Rating
+  app.register(NewRatingRouter)
+
+  // Address
+  app.register(RegisterAddressRouter)
+  app.register(UpdateAddressRouter)
+
+  // Affiliation
+  app.register(ListAffiliationRouter)
+  app.register(EditAffiliationRouter)
+  app.register(DeleteAffiliationRouter)
+
+  // Via cep
+  app.register(GetAddressRouter)
 
   app.setErrorHandler((error, _, reply) => {
     if (env.NODE_ENV !== 'production') {

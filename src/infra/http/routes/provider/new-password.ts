@@ -9,8 +9,8 @@ import { BcryptHasher } from '@/infra/criptography/bcrypt-hasher'
 import { UnauthorizedError } from '../_errors/unauthorized-error'
 import { ConflictActionError } from '@/domain/atlas-api/application/use-cases/errors/conflit-errror-action'
 import { getPrismaClient } from '@/infra/db/prisma'
-import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-instituition-repository'
 import { PrismaPatientRepository } from '@/infra/db/repositories/prisma-patient-repository'
+import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-institution-repository'
 
 function makeNewPasswordUseCase() {
   const prisma = getPrismaClient()
@@ -44,10 +44,9 @@ export async function NewPasswordRouter(app: FastifyInstance) {
         }),
         response: {
           200: z.never(),
-          400: z.string(),
-          401: z.string(),
-          404: z.string(),
-          409: z.string(),
+          401: z.object({ message: z.string(), status: z.literal(401) }),
+          404: z.object({ message: z.string(), status: z.literal(404) }),
+          409: z.object({ message: z.string(), status: z.literal(409) }),
         },
       },
     },
@@ -61,13 +60,19 @@ export async function NewPasswordRouter(app: FastifyInstance) {
 
         switch (error.constructor) {
           case UnauthorizedError:
-            return reply.status(401).send(error.message)
+            return reply
+              .status(401)
+              .send({ message: error.message, status: 401 })
           case ConflictActionError:
-            return reply.status(409).send(error.message)
+            return reply
+              .status(409)
+              .send({ message: error.message, status: 409 })
           case ResourceNotFoundError:
-            return reply.status(404).send(error.message)
+            return reply
+              .status(404)
+              .send({ message: error.message, status: 404 })
           default:
-            return reply.status(400).send(error.message)
+            return reply.send()
         }
       }
 

@@ -38,4 +38,16 @@ export class PrismaPatientRepository implements PatientRepository {
     })
     return patient ? PrismaPatientMapper.toDomain(patient) : null
   }
+  async findByCPF(cpf: string): Promise<Patient | null> {
+    const patient = await this.prisma.patient.findUnique({
+      where: { cpf },
+    })
+    return patient ? PrismaPatientMapper.toDomain(patient) : null
+  }
+  async findByPhone(phone: string): Promise<Patient | null> {
+    const patient = await this.prisma.patient.findUnique({
+      where: { phone },
+    })
+    return patient ? PrismaPatientMapper.toDomain(patient) : null
+  }
 }

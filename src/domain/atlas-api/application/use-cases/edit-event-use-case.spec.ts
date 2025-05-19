@@ -12,9 +12,7 @@ let sut: EditEventUseCase
 describe('Edit Event', () => {
   beforeEach(() => {
     inMemoryAppointmentRepository = new InMemoryAppointmentRepository()
-    inMemoryEventRepository = new InMemoryEventRepository(
-      inMemoryAppointmentRepository
-    )
+    inMemoryEventRepository = new InMemoryEventRepository()
 
     sut = new EditEventUseCase(inMemoryEventRepository)
   })

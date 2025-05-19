@@ -9,6 +9,7 @@ interface UpdateProviderUseCaseRequest {
   birthday: Date
   duration: number
   price: number
+  occupation: string
   specialty: string
   education?: string
   description?: string
@@ -35,6 +36,7 @@ export class UpdateProviderUseCase {
       phone,
       price,
       specialty,
+      occupation,
       description,
       education,
     } = data
@@ -45,6 +47,7 @@ export class UpdateProviderUseCase {
     provider.phone = phone
     provider.price = price
     provider.specialty = specialty
+    provider.occupation = occupation
     provider.description = description ?? undefined
     provider.education = education ?? undefined
 

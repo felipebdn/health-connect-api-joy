@@ -10,7 +10,9 @@ export class PrismaAppointmentMapper {
         providerId: new UniqueEntityId(raw.providerId),
         eventId: new UniqueEntityId(raw.eventId),
         description: raw.description,
-        institutionId: new UniqueEntityId(raw.institutionId),
+        institutionId: raw.institutionId
+          ? new UniqueEntityId(raw.institutionId)
+          : undefined,
         patientId: new UniqueEntityId(raw.patientId),
       },
       new UniqueEntityId(raw.id)
@@ -24,7 +26,9 @@ export class PrismaAppointmentMapper {
       providerId: appointment.providerId.toValue(),
       eventId: appointment.eventId.toValue(),
       description: appointment.description,
-      institutionId: appointment.institutionId.toValue(),
+      institutionId: appointment.institutionId
+        ? appointment.institutionId.toValue()
+        : undefined,
       patientId: appointment.patientId.toValue(),
     }
   }

@@ -23,6 +23,7 @@ export async function ChangeDurationRouter(app: FastifyInstance) {
     .put(
       '/provider/:providerId/duration',
       {
+        preHandler: [app.authenticate],
         schema: {
           tags: ['Provider'],
           summary: 'Change the query duration.',
@@ -37,8 +38,8 @@ export async function ChangeDurationRouter(app: FastifyInstance) {
           }),
           response: {
             200: z.never(),
-            400: z.string(),
-            404: z.string(),
+            401: z.object({ message: z.string(), status: z.literal(401) }),
+            404: z.object({ message: z.string(), status: z.literal(404) }),
           },
         },
       },
@@ -46,7 +47,9 @@ export async function ChangeDurationRouter(app: FastifyInstance) {
         const userId = await getCurrentUserId()
 
         if (params.providerId !== userId) {
-          return reply.status(401).send('Unauthorized.')
+          return reply
+            .status(401)
+            .send({ message: 'Unauthorized.', status: 401 })
         }
 
         const changeDurationUseCase = makeChangeDurationUseCase()
@@ -61,10 +64,12 @@ export async function ChangeDurationRouter(app: FastifyInstance) {
 
           switch (error.constructor) {
             case ResourceNotFoundError: {
-              return reply.status(404).send(error.message)
+              return reply
+                .status(404)
+                .send({ message: error.message, status: 404 })
             }
             default:
-              return reply.status(400).send(error.message)
+              return reply.send()
           }
         }
         return reply.status(200).send()

@@ -18,6 +18,7 @@ export async function ListAvailabilityDayRouter(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
     '/:providerId/availabilities/day/:date',
     {
+      preHandler: [app.authenticate],
       schema: {
         tags: ['Event'],
         summary: 'List availability by day.',
@@ -35,8 +36,7 @@ export async function ListAvailabilityDayRouter(app: FastifyInstance) {
               })
             ),
           }),
-          400: z.string(),
-          404: z.string(),
+          404: z.object({ status: z.literal(404), message: z.string() }),
         },
       },
     },
@@ -50,9 +50,11 @@ export async function ListAvailabilityDayRouter(app: FastifyInstance) {
 
         switch (error.constructor) {
           case ResourceNotFoundError:
-            return reply.status(404).send(error.message)
+            return reply
+              .status(404)
+              .send({ message: error.message, status: 404 })
           default:
-            return reply.status(400).send(error.message)
+            return reply.send()
         }
       }
       return reply.status(200).send({ schedules: result.value.schedules })

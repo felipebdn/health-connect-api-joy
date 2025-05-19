@@ -15,6 +15,7 @@ interface EditEventUseCaseRequest {
   startTime: Date
   endTime: Date
   startTimezone: string
+  institutionId?: string
   endTimezone: string
   recurrenceRule?: string
   currentStartTime?: Date
@@ -60,7 +61,12 @@ export class EditEventUseCase {
         event.endTime = props.endTime
         event.startTimezone = props.startTimezone
         event.endTimezone = props.endTimezone
+        event.institutionId = props.institutionId
+          ? new UniqueEntityId(props.institutionId)
+          : undefined
+
         await this.eventRepository.save(event)
+
         return right({})
 
       // Caso seja edição de um evento único e possui uma regra de recorrência, então cria um novo evento e adiciona a data no "recurrenceException" do evento pai.
@@ -75,8 +81,9 @@ export class EditEventUseCase {
           startTime: props.startTime,
           startTimezone: props.startTimezone,
           title: 'availability',
-          recurrenceID: event.id,
-          institutionId: event.institutionId,
+          institutionId: props.institutionId
+            ? new UniqueEntityId(props.institutionId)
+            : undefined,
         })
         event.recurrenceException = props.currentStartTime
 
@@ -90,6 +97,9 @@ export class EditEventUseCase {
         event.startTime = props.startTime
         event.endTime = props.endTime
         event.startTimezone = props.startTimezone
+        event.institutionId = props.institutionId
+          ? new UniqueEntityId(props.institutionId)
+          : undefined
         event.endTimezone = props.endTimezone
         event.recurrenceRule = props.recurrenceRule
         await this.eventRepository.save(event)

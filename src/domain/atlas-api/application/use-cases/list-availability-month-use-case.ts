@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
-import * as RRuleLib from 'rrule'
+import RRuleLib from 'rrule'
 
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { type Either, left, right } from '@/core/either'
@@ -51,12 +51,9 @@ export class ListAvailabilityByMonthUseCase {
 
     for (const raw of events) {
       if (raw.recurrenceRule && raw.title === 'availability') {
-        const days = RRule.fromString(raw.recurrenceRule).between(
-          firstDayOfMonth,
-          lastDayOfMonth,
-          true
-        )
-        // .filter((day) => dayjs(day).isSameOrAfter(raw.startTime))
+        const days = RRule.fromString(raw.recurrenceRule)
+          .between(firstDayOfMonth, lastDayOfMonth, true)
+          .filter((day) => dayjs(day).isSameOrAfter(raw.startTime))
 
         if (raw.recurrenceException) {
           const datesExceptions = raw.recurrenceException

@@ -7,18 +7,26 @@ import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provide
 import { ListEventsProviderUseCase } from '@/domain/atlas-api/application/use-cases/list-events-provider-use-case'
 import { EventPresenterWithAppointment } from '@/infra/db/presenters/event-presenter'
 import { getPrismaClient } from '@/infra/db/prisma'
+import { PrismaAppointmentEventPatientRepository } from '@/infra/db/repositories/prisma-appointment-event-patient-repository'
 
 function makeListEventsProviderUseCase() {
   const prisma = getPrismaClient()
   const providerRepository = new PrismaProviderRepository(prisma)
   const eventRepository = new PrismaEventRepository(prisma)
-  return new ListEventsProviderUseCase(providerRepository, eventRepository)
+  const appointmentEventPatientRepository =
+    new PrismaAppointmentEventPatientRepository(prisma)
+  return new ListEventsProviderUseCase(
+    providerRepository,
+    eventRepository,
+    appointmentEventPatientRepository
+  )
 }
 
 export async function ListEventsProviderRouter(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().get(
     '/provider/:providerId/events',
     {
+      preHandler: [app.authenticate],
       schema: {
         tags: ['Event'],
         summary: 'List events provider.',
@@ -37,13 +45,13 @@ export async function ListEventsProviderRouter(app: FastifyInstance) {
                 StartTimezone: z.string(),
                 EndTimezone: z.string(),
                 RecurrenceRule: z.string().optional(),
+                Institution: z.string().optional(),
                 RecurrenceID: z.string().optional(),
                 RecurrenceException: z.string().optional(),
               })
             ),
           }),
-          400: z.string(),
-          404: z.string(),
+          404: z.object({ status: z.literal(404), message: z.string() }),
         },
       },
     },
@@ -57,9 +65,11 @@ export async function ListEventsProviderRouter(app: FastifyInstance) {
 
         switch (error.constructor) {
           case ResourceNotFoundError:
-            return reply.status(404).send(error.message)
+            return reply
+              .status(404)
+              .send({ message: error.message, status: 404 })
           default:
-            return reply.status(400).send(error.message)
+            return reply.send()
         }
       }
       return reply.status(200).send({

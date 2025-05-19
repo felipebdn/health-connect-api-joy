@@ -9,7 +9,7 @@ import { NewEventUseCase } from '@/domain/atlas-api/application/use-cases/new-ev
 import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
 import { SchedulesConflict } from '@/domain/atlas-api/application/errors/schedules-conflict-error'
 import { getPrismaClient } from '@/infra/db/prisma'
-import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-instituition-repository'
+import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-institution-repository'
 
 function makeNewEventUseCase() {
   const prisma = getPrismaClient()
@@ -30,6 +30,7 @@ export async function NewEventRouter(app: FastifyInstance) {
     .post(
       '/provider/events/new',
       {
+        preHandler: [app.authenticate],
         schema: {
           tags: ['Event'],
           summary: 'New event.',
@@ -43,13 +44,12 @@ export async function NewEventRouter(app: FastifyInstance) {
             endTimezone: z.string(),
             recurrenceRule: z.string().optional(),
             duration: z.coerce.number(),
-            institutionId: z.string(),
+            institutionId: z.string().optional(),
           }),
           response: {
             201: z.never(),
-            400: z.string(),
-            404: z.string(),
-            409: z.string(),
+            404: z.object({ status: z.literal(404), message: z.string() }),
+            409: z.object({ status: z.literal(409), message: z.string() }),
           },
         },
       },
@@ -65,15 +65,17 @@ export async function NewEventRouter(app: FastifyInstance) {
 
           switch (error.constructor) {
             case ResourceNotFoundError:
-              return reply.status(404).send(error.message)
-            case SchedulesConflict:
               return reply
-                .status(409)
-                .send(
-                  'Available time shorter than the duration of the consultation.'
-                )
+                .status(404)
+                .send({ message: error.message, status: 404 })
+            case SchedulesConflict:
+              return reply.status(409).send({
+                message:
+                  'Available time shorter than the duration of the consultation.',
+                status: 409,
+              })
             default:
-              return reply.status(400).send(error.message)
+              return reply.send()
           }
         }
         return reply.status(201).send()

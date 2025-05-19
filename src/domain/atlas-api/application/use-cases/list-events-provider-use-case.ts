@@ -4,6 +4,7 @@ import type { Appointment } from '../../enterprise/entities/appointment'
 import type { EventEntity } from '../../enterprise/entities/event'
 import type { ProviderRepository } from '../repositories/provider-repository'
 import type { EventRepository } from '../repositories/recurrence-repository'
+import type { AppointmentEventPatientRepository } from '../repositories/appointment-event-patient-repository'
 
 interface ListEventsProviderUseCaseRequest {
   providerId: string
@@ -22,7 +23,8 @@ type ListEventsProviderUseCaseResponse = Either<
 export class ListEventsProviderUseCase {
   constructor(
     private providerRepository: ProviderRepository,
-    private eventRepository: EventRepository
+    private eventRepository: EventRepository,
+    private appointEventPatient: AppointmentEventPatientRepository
   ) {}
 
   async execute({
@@ -38,7 +40,7 @@ export class ListEventsProviderUseCase {
       await this.eventRepository.findManyEventsAvailable(providerId)
 
     const appointments =
-      await this.eventRepository.findManyEventsUnavailable(providerId)
+      await this.appointEventPatient.findManyEventsUnavailable(providerId)
 
     const resultEvents = [
       ...events.map((item) => ({

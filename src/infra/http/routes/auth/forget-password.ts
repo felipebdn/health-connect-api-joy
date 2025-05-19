@@ -7,8 +7,8 @@ import { PrismaAuthCodeRepository } from '@/infra/db/repositories/prisma-auth-co
 import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
 import { EmailJsService } from '@/infra/email/emailjs-service'
 import { getPrismaClient } from '@/infra/db/prisma'
-import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-instituition-repository'
 import { PrismaPatientRepository } from '@/infra/db/repositories/prisma-patient-repository'
+import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-institution-repository'
 
 function makeForgetPasswordUseCase() {
   const prisma = getPrismaClient()
@@ -42,8 +42,7 @@ export async function ForgetPasswordRouter(app: FastifyInstance) {
         }),
         response: {
           200: z.never(),
-          400: z.string(),
-          404: z.string(),
+          404: z.object({ status: z.literal(404), message: z.string() }),
         },
       },
     },
@@ -61,9 +60,9 @@ export async function ForgetPasswordRouter(app: FastifyInstance) {
 
         switch (error.constructor) {
           case ResourceNotFoundError:
-            return reply.status(404).send(error.message)
-          default:
-            return reply.status(400).send(error.message)
+            return reply
+              .status(404)
+              .send({ message: error.message, status: 404 })
         }
       }
       return reply.status(200).send()

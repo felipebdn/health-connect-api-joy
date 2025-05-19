@@ -28,6 +28,7 @@ export async function GetAppointmentRouter(app: FastifyInstance) {
     '/appointment/:eventId',
     {
       schema: {
+        preHandler: [app.authenticate],
         tags: ['Appointment'],
         summary: 'Find an appointment.',
         params: z.object({
@@ -39,7 +40,7 @@ export async function GetAppointmentRouter(app: FastifyInstance) {
               id: z.string(),
               providerId: z.string(),
               eventId: z.string(),
-              institutionId: z.string(),
+              institutionId: z.string().optional(),
               patientId: z.string(),
               description: z.string().optional(),
               createdAt: z.coerce.date(),
@@ -65,8 +66,7 @@ export async function GetAppointmentRouter(app: FastifyInstance) {
               }),
             }),
           }),
-          400: z.string(),
-          404: z.string(),
+          404: z.object({ status: z.literal(404), message: z.string() }),
         },
       },
     },
@@ -79,9 +79,12 @@ export async function GetAppointmentRouter(app: FastifyInstance) {
 
         switch (error.constructor) {
           case ResourceNotFoundError:
-            return reply.status(404).send(error.message)
+            return reply.status(404).send({
+              status: 404,
+              message: error.message,
+            })
           default:
-            return reply.status(400).send(error.message)
+            return reply.send()
         }
       }
       return reply.status(200).send({

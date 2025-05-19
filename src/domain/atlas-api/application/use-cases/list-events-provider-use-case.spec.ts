@@ -5,23 +5,34 @@ import { InMemoryAppointmentRepository } from '@test/repositories/in-memory-appo
 import { InMemoryEventRepository } from '@test/repositories/in-memory-events-repository'
 import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
 import { ListEventsProviderUseCase } from './list-events-provider-use-case'
+import { InMemoryAppointmentEventPatientRepository } from '@test/repositories/in-memory-appointment-event-patient-repository'
+import { InMemoryPatientRepository } from '@test/repositories/in-memory-patient-repository'
 
 let inMemoryProviderRepository: InMemoryProviderRepository
 let inMemoryAppointmentRepository: InMemoryAppointmentRepository
 let inMemoryEventRepository: InMemoryEventRepository
+let inMemoryPatientRepository: InMemoryPatientRepository
+let inMemoryAppointmentEventPatientRepository: InMemoryAppointmentEventPatientRepository
 let sut: ListEventsProviderUseCase
 
 describe('List Schedules Month', () => {
   beforeEach(() => {
     inMemoryProviderRepository = new InMemoryProviderRepository()
     inMemoryAppointmentRepository = new InMemoryAppointmentRepository()
-    inMemoryEventRepository = new InMemoryEventRepository(
-      inMemoryAppointmentRepository
-    )
+    inMemoryEventRepository = new InMemoryEventRepository()
+    inMemoryPatientRepository = new InMemoryPatientRepository()
+    inMemoryAppointmentEventPatientRepository =
+      new InMemoryAppointmentEventPatientRepository(
+        inMemoryAppointmentRepository,
+        inMemoryEventRepository,
+        inMemoryPatientRepository,
+        inMemoryProviderRepository
+      )
 
     sut = new ListEventsProviderUseCase(
       inMemoryProviderRepository,
-      inMemoryEventRepository
+      inMemoryEventRepository,
+      inMemoryAppointmentEventPatientRepository
     )
   })
 

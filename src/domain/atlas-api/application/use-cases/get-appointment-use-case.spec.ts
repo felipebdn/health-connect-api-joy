@@ -6,6 +6,7 @@ import { makeEvent } from '@test/factories/make-events'
 import { InMemoryAppointmentRepository } from '@test/repositories/in-memory-appointment-repository'
 import { InMemoryEventRepository } from '@test/repositories/in-memory-events-repository'
 import { InMemoryPatientRepository } from '@test/repositories/in-memory-patient-repository'
+import { makePatient } from '@test/factories/make-patient'
 
 let inMemoryAppointmentRepository: InMemoryAppointmentRepository
 let inMemoryEventRepository: InMemoryEventRepository
@@ -16,9 +17,7 @@ describe('Get Appointment', () => {
   beforeEach(() => {
     inMemoryAppointmentRepository = new InMemoryAppointmentRepository()
     inMemoryPatientRepository = new InMemoryPatientRepository()
-    inMemoryEventRepository = new InMemoryEventRepository(
-      inMemoryAppointmentRepository
-    )
+    inMemoryEventRepository = new InMemoryEventRepository()
 
     sut = new GetAppointmentUseCase(
       inMemoryAppointmentRepository,
@@ -30,8 +29,11 @@ describe('Get Appointment', () => {
   it('should be able to get appointment by appointmentId', async () => {
     const event = makeEvent({})
     inMemoryEventRepository.items.push(event)
+    const patient = makePatient({})
+    inMemoryPatientRepository.items.push(patient)
     const appointment = makeAppointment({
       eventId: event.id,
+      patientId: patient.id,
     })
     inMemoryAppointmentRepository.items.push(appointment)
 

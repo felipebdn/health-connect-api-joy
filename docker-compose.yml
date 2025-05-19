@@ -26,7 +26,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: dockerfile.deploy
     depends_on:
       pg:
         condition: service_healthy
@@ -44,8 +44,7 @@ services:
   migrate:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: dependencies
+      dockerfile: dockerfile.migration
     depends_on:
       pg:
         condition: service_healthy

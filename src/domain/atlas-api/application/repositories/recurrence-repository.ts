@@ -1,4 +1,3 @@
-import type { Appointment } from '../../enterprise/entities/appointment'
 import type { EventEntity } from '../../enterprise/entities/event'
 
 export interface EventRepository {
@@ -9,10 +8,6 @@ export interface EventRepository {
   createMany(events: EventEntity[]): Promise<void>
   findById(eventId: string): Promise<EventEntity | null>
   findManyEventsAvailable(providerId: string): Promise<EventEntity[]>
-  findManyEventsUnavailable(providerId: string): Promise<
-    {
-      event: EventEntity
-      appointment: Appointment
-    }[]
-  >
+
+  getAll(): Promise<EventEntity[]>
 }

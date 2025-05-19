@@ -32,4 +32,18 @@ export class InMemoryPatientRepository implements PatientRepository {
     }
     return patient
   }
+  async findByCPF(cpf: string): Promise<Patient | null> {
+    const patient = this.items.find((item) => item.cpf === cpf)
+    if (!patient) {
+      return null
+    }
+    return patient
+  }
+  async findByPhone(phone: string): Promise<Patient | null> {
+    const patient = this.items.find((item) => item.phone === phone)
+    if (!patient) {
+      return null
+    }
+    return patient
+  }
 }

@@ -8,17 +8,24 @@ export interface ProviderProps {
   password: string
   phone: string
   duration: number
+  providerCode: string
+  nextAvailability?: Date
   birthday: Date
+  occupation: string
   specialty: string
   price: number
   education?: string
   description?: string
-  addressId?: string
+  addressId?: UniqueEntityId
 }
 
 export class Provider extends Entity<ProviderProps> {
   get name() {
     return this.props.name
+  }
+
+  get nextAvailability() {
+    return this.props.nextAvailability
   }
 
   get email() {
@@ -27,6 +34,10 @@ export class Provider extends Entity<ProviderProps> {
 
   get cpf() {
     return this.props.cpf
+  }
+
+  get providerCode() {
+    return this.props.providerCode
   }
 
   get phone() {
@@ -53,6 +64,10 @@ export class Provider extends Entity<ProviderProps> {
     return this.props.specialty
   }
 
+  get occupation() {
+    return this.props.occupation
+  }
+
   get education() {
     return this.props.education
   }
@@ -61,7 +76,7 @@ export class Provider extends Entity<ProviderProps> {
     return this.props.description
   }
 
-  get addressId() {
+  get addressId(): UniqueEntityId | undefined {
     return this.props.addressId
   }
 
@@ -85,8 +100,16 @@ export class Provider extends Entity<ProviderProps> {
     this.props.price = price
   }
 
+  set addressId(addressId: UniqueEntityId) {
+    this.props.addressId = addressId
+  }
+
   set specialty(specialty: string) {
     this.props.specialty = specialty
+  }
+
+  set occupation(occupation: string) {
+    this.props.occupation = occupation
   }
 
   set description(description: string | undefined) {
@@ -95,6 +118,10 @@ export class Provider extends Entity<ProviderProps> {
 
   set education(education: string | undefined) {
     this.props.education = education
+  }
+
+  set nextAvailability(date: Date | undefined) {
+    this.props.nextAvailability = date
   }
 
   set password(hash: string) {

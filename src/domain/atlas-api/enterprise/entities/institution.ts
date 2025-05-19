@@ -6,6 +6,7 @@ export interface InstitutionProps {
   name: string
   email: string
   password: string
+  institutionName: string
   cnpj?: string
   phone?: string
   addressId?: UniqueEntityId
@@ -17,6 +18,10 @@ export class Institution extends Entity<InstitutionProps> {
     return this.props.name
   }
 
+  get institutionName() {
+    return this.props.institutionName
+  }
+
   get email() {
     return this.props.email
   }
@@ -25,7 +30,7 @@ export class Institution extends Entity<InstitutionProps> {
     return this.props.password
   }
 
-  get addressId() {
+  get addressId(): UniqueEntityId | undefined {
     return this.props.addressId
   }
 
@@ -55,6 +60,10 @@ export class Institution extends Entity<InstitutionProps> {
 
   set phone(phone: string | undefined) {
     this.props.phone = phone
+  }
+
+  set addressId(addressId: UniqueEntityId) {
+    this.props.addressId = addressId
   }
 
   static create(

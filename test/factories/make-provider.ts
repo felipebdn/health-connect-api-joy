@@ -16,9 +16,11 @@ export function makeProvider(
       cpf: faker.vehicle.vin(),
       email: faker.internet.email(),
       name: faker.person.fullName(),
+      providerCode: faker.person.middleName(),
       education: faker.person.jobArea(),
       password: faker.internet.password(),
       specialty: faker.person.jobType(),
+      occupation: faker.person.jobArea(),
       description: faker.person.bio(),
       birthday: faker.date.birthdate(),
       duration: faker.number.int({

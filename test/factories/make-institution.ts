@@ -17,6 +17,7 @@ export function makeInstitution(
       name: faker.person.fullName(),
       password: faker.internet.password(),
       phone: faker.phone.number(),
+      institutionName: faker.person.firstName(),
       ...override,
     },
     id

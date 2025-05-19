@@ -32,6 +32,7 @@ export async function MakeAppointmentRouter(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
     '/appointment/new',
     {
+      preHandler: [app.authenticate],
       schema: {
         tags: ['Appointment'],
         summary: 'Make an appointment.',
@@ -47,8 +48,9 @@ export async function MakeAppointmentRouter(app: FastifyInstance) {
             appointment_id: z.string(),
             event_id: z.string(),
           }),
-          400: z.string(),
-          404: z.string(),
+          400: z.object({ status: z.literal(400), message: z.string() }),
+          404: z.object({ status: z.literal(404), message: z.string() }),
+          409: z.object({ status: z.literal(409), message: z.string() }),
         },
       },
     },
@@ -61,13 +63,19 @@ export async function MakeAppointmentRouter(app: FastifyInstance) {
 
         switch (error.constructor) {
           case ResourceNotFoundError:
-            return reply.status(404).send(error.message)
+            return reply
+              .status(404)
+              .send({ status: 404, message: error.message })
           case EmailNotSent:
-            return reply.status(400).send(error.message)
+            return reply
+              .status(400)
+              .send({ status: 400, message: error.message })
           case MethodInvalidError:
-            return reply.status(409).send(error.message)
+            return reply
+              .status(409)
+              .send({ status: 409, message: error.message })
           default:
-            return reply.status(400).send(error.message)
+            return reply.send()
         }
       }
       const appointment = result.value.appointment

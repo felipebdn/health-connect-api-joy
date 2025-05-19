@@ -5,6 +5,12 @@ import type { PrismaClient } from '@prisma/client'
 
 export class PrismaAppointmentRepository implements AppointmentRepository {
   constructor(private prisma: PrismaClient) {}
+
+  async getAll(): Promise<Appointment[]> {
+    const appointments = await this.prisma.appointment.findMany()
+    return appointments.map(PrismaAppointmentMapper.toDomain)
+  }
+
   async create(appointment: Appointment): Promise<void> {
     await this.prisma.appointment.create({
       data: PrismaAppointmentMapper.toPrisma(appointment),

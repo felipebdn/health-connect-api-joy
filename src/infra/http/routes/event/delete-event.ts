@@ -28,6 +28,7 @@ export async function DeleteEventRouter(app: FastifyInstance) {
     .delete(
       '/provider/events',
       {
+        preHandler: [app.authenticate],
         schema: {
           tags: ['Event'],
           summary: 'Delete an event.',
@@ -39,8 +40,7 @@ export async function DeleteEventRouter(app: FastifyInstance) {
           }),
           response: {
             200: z.never(),
-            404: z.string(),
-            400: z.string(),
+            404: z.object({ status: z.literal(404), message: z.string() }),
           },
         },
       },
@@ -58,9 +58,11 @@ export async function DeleteEventRouter(app: FastifyInstance) {
 
           switch (error.constructor) {
             case ResourceNotFoundError:
-              return reply.status(404).send(error.message)
+              return reply
+                .status(404)
+                .send({ message: error.message, status: 404 })
             default:
-              return reply.status(400).send(error.message)
+              return reply.send()
           }
         }
         return reply.status(200).send()

@@ -7,6 +7,12 @@ import type { PrismaClient } from '@prisma/client'
 
 export class PrismaEventRepository implements EventRepository {
   constructor(private prisma: PrismaClient) {}
+
+  async getAll(): Promise<EventEntity[]> {
+    const events = await this.prisma.event.findMany()
+    return events.map(PrismaEventMapper.toDomain)
+  }
+
   async create(event: EventEntity) {
     await this.prisma.event.create({
       data: PrismaEventMapper.toPrisma(event),
@@ -63,22 +69,5 @@ export class PrismaEventRepository implements EventRepository {
       },
     })
     return events.map(PrismaEventMapper.toDomain)
-  }
-
-  async findManyEventsUnavailable(
-    providerId: string
-  ): Promise<{ event: EventEntity; appointment: Appointment }[]> {
-    const appointments = await this.prisma.appointment.findMany({
-      where: {
-        providerId,
-      },
-      include: {
-        event: true,
-      },
-    })
-    return appointments.map((item) => ({
-      event: PrismaEventMapper.toDomain(item.event),
-      appointment: PrismaAppointmentMapper.toDomain(item),
-    }))
   }
 }

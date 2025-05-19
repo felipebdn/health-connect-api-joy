@@ -21,6 +21,7 @@ export async function UpdateProviderRouter(app: FastifyInstance) {
     .put(
       '/provider/:providerId/update',
       {
+        preHandler: [app.authenticate],
         schema: {
           tags: ['Provider'],
           summary: 'Update provider.',
@@ -34,6 +35,9 @@ export async function UpdateProviderRouter(app: FastifyInstance) {
             specialty: z.string().min(1, {
               message: 'Specialty is not empty.',
             }),
+            occupation: z.string().min(1, {
+              message: 'Occupation is not empty.',
+            }),
             education: z.string().optional(),
             description: z.string().optional(),
           }),
@@ -42,8 +46,7 @@ export async function UpdateProviderRouter(app: FastifyInstance) {
           }),
           response: {
             200: z.never(),
-            400: z.string(),
-            404: z.string(),
+            404: z.object({ message: z.string(), status: z.literal(404) }),
           },
         },
       },
@@ -60,9 +63,11 @@ export async function UpdateProviderRouter(app: FastifyInstance) {
 
           switch (error.constructor) {
             case ResourceNotFoundError:
-              throw reply.status(404).send(error.message)
+              throw reply
+                .status(404)
+                .send({ message: error.message, status: 404 })
             default:
-              throw reply.status(400).send(error.message)
+              throw reply.send()
           }
         }
 

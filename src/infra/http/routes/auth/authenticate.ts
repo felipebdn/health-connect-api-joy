@@ -1,13 +1,14 @@
 import { WrongCredentialsError } from '@/domain/atlas-api/application/errors/wrong-credentials-error'
-import { AuthenticateUseCase } from '@/domain/atlas-api/application/use-cases/authenticate-provider-use-case'
+import { AuthenticateUseCase } from '@/domain/atlas-api/application/use-cases/authenticate-use-case'
 import { BcryptHasher } from '@/infra/criptography/bcrypt-hasher'
 import { getPrismaClient } from '@/infra/db/prisma'
-import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-instituition-repository'
+import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-institution-repository'
 import { PrismaPatientRepository } from '@/infra/db/repositories/prisma-patient-repository'
 import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
+import { Provider } from '@/domain/atlas-api/enterprise/entities/provider'
 
 function makeAuthenticateUseCase() {
   const prisma = getPrismaClient()
@@ -41,10 +42,11 @@ export async function AuthenticateRouter(app: FastifyInstance) {
         }),
         response: {
           200: z.object({
-            accessToken: z.string(),
+            id: z.string(),
+            name: z.string(),
+            duration: z.coerce.number().optional(),
           }),
-          400: z.string(),
-          401: z.string(),
+          401: z.object({ status: z.literal(401), message: z.string() }),
         },
       },
     },
@@ -61,24 +63,56 @@ export async function AuthenticateRouter(app: FastifyInstance) {
 
         switch (error.constructor) {
           case WrongCredentialsError: {
-            return reply.status(401).send(error.message)
+            return reply
+              .status(401)
+              .send({ status: 401, message: error.message })
           }
           default:
-            return reply.status(400).send(error.message)
+            return reply.send()
         }
       }
 
       const accessToken = await reply.jwtSign(
         {
           sub: result.value.user.id.toString(),
-          rule: body.type,
+          role: body.type,
         },
         {
           sign: { expiresIn: '7d' },
         }
       )
 
-      return reply.status(200).send({ accessToken })
+      let user: {
+        id: string
+        name: string
+        duration?: number
+      }
+
+      if (result.value.user instanceof Provider) {
+        user = {
+          id: result.value.user.id.toValue(),
+          name: result.value.user.name,
+          duration: result.value.user.duration,
+        }
+      } else {
+        user = {
+          id: result.value.user.id.toValue(),
+          name: result.value.user.name,
+          duration: undefined,
+        }
+      }
+
+      return reply
+        .code(200)
+        .setCookie('atlas.access_token', accessToken, {
+          maxAge: 1000 * 60 * 60 * 24 * 7,
+          path: '/',
+          httpOnly: true,
+          secure: false,
+          sameSite: 'lax',
+          // secure: process.env.NODE_ENV === 'production',
+        })
+        .send(user)
     }
   )
 }

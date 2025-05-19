@@ -1,14 +1,12 @@
 import type { EventRepository } from '@/domain/atlas-api/application/repositories/recurrence-repository'
-import type { Appointment } from '@/domain/atlas-api/enterprise/entities/appointment'
 import type { EventEntity } from '@/domain/atlas-api/enterprise/entities/event'
-import type { InMemoryAppointmentRepository } from './in-memory-appointment-repository'
 
 export class InMemoryEventRepository implements EventRepository {
-  constructor(
-    private inMemoryAppointmentRepository: InMemoryAppointmentRepository
-  ) {}
-
   public items: EventEntity[] = []
+
+  async getAll(): Promise<EventEntity[]> {
+    return this.items
+  }
 
   async create(recurrence: EventEntity): Promise<void> {
     this.items.push(recurrence)
@@ -62,19 +60,5 @@ export class InMemoryEventRepository implements EventRepository {
         item.providerId.toValue() === providerId &&
         item.title === 'availability'
     )
-  }
-
-  async findManyEventsUnavailable(
-    providerId: string
-  ): Promise<{ event: EventEntity; appointment: Appointment }[]> {
-    const appointments =
-      await this.inMemoryAppointmentRepository.findManyByProviderId(providerId)
-    const data = appointments.map((item) => ({
-      event:
-        this.items.find((event) => event.id === item.eventId) ?? this.items[0],
-      appointment: item,
-    }))
-
-    return data
   }
 }

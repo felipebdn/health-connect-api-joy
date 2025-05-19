@@ -8,18 +8,14 @@ import { makeInstitution } from '@test/factories/make-institution'
 
 let inMemoryProviderRepository: InMemoryProviderRepository
 let inMemoryEventRepository: InMemoryEventRepository
-let inMemoryAppointmentRepository: InMemoryAppointmentRepository
 let inMemoryInstitutionRepository: InMemoryInstitutionRepository
 let sut: NewEventUseCase
 
 describe('New Recurrence', () => {
   beforeEach(() => {
     inMemoryProviderRepository = new InMemoryProviderRepository()
-    inMemoryAppointmentRepository = new InMemoryAppointmentRepository()
     inMemoryInstitutionRepository = new InMemoryInstitutionRepository()
-    inMemoryEventRepository = new InMemoryEventRepository(
-      inMemoryAppointmentRepository
-    )
+    inMemoryEventRepository = new InMemoryEventRepository()
 
     sut = new NewEventUseCase(
       inMemoryEventRepository,

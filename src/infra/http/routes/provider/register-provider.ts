@@ -3,6 +3,7 @@ import { RegisterProviderUseCase } from '@/domain/atlas-api/application/use-case
 import { BcryptHasher } from '@/infra/criptography/bcrypt-hasher'
 import { getPrismaClient } from '@/infra/db/prisma'
 import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
+import { response409 } from '@/infra/swagger/responses'
 import { validatorCPF } from '@/utils/cpf-validator'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
@@ -26,6 +27,7 @@ export async function RegisterProviderRouter(app: FastifyInstance) {
           name: z.string().min(1, { message: 'Name is not empty.' }),
           email: z.string().email(),
           phone: z.string(),
+          providerCode: z.string(),
           birthday: z.coerce.date(),
           price: z.coerce.number(),
           duration: z.coerce.number(),
@@ -39,13 +41,15 @@ export async function RegisterProviderRouter(app: FastifyInstance) {
           specialty: z.string().min(1, {
             message: 'Specialty is not empty.',
           }),
+          occupation: z.string().min(1, {
+            message: 'Occupation is not empty.',
+          }),
           education: z.string().optional(),
           description: z.string().optional(),
         }),
         response: {
           201: z.never(),
-          400: z.string(),
-          409: z.string(),
+          409: response409,
         },
       },
     },
@@ -59,9 +63,9 @@ export async function RegisterProviderRouter(app: FastifyInstance) {
 
         switch (error.constructor) {
           case ResourceAlreadyExistsError:
-            return reply.status(409).send(error.message)
+            return reply.status(409).send(error.toJSON())
           default:
-            return reply.status(400).send(error.message)
+            return reply.send()
         }
       }
 

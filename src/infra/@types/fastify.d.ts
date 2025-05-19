@@ -5,6 +5,12 @@ declare module 'fastify' {
   interface FastifyRequest {
     jwt: JWT
   }
+  interface FastifyInstance {
+    authenticate: (
+      request: FastifyRequest,
+      reply: FastifyReply
+    ) => Promise<void>
+  }
   export interface FastifyRequest {
     getCurrentUserId(): Promise<string>
   }
@@ -12,7 +18,7 @@ declare module 'fastify' {
 
 type UserPayload = {
   sub: string
-  rule: 'INSTITUTION' | 'PROVIDER' | 'PATIENT'
+  role: 'INSTITUTION' | 'PROVIDER' | 'PATIENT'
 }
 
 declare module '@fastify/jwt' {

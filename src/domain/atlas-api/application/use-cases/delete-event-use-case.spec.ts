@@ -12,9 +12,7 @@ let sut: DeleteEventUseCase
 describe('Change Duration Provider', () => {
   beforeEach(() => {
     inMemoryAppointmentRepository = new InMemoryAppointmentRepository()
-    inMemoryEventRepository = new InMemoryEventRepository(
-      inMemoryAppointmentRepository
-    )
+    inMemoryEventRepository = new InMemoryEventRepository()
 
     sut = new DeleteEventUseCase(
       inMemoryAppointmentRepository,

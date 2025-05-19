@@ -12,7 +12,7 @@ export interface PatientProps {
 }
 
 export class Patient extends Entity<PatientProps> {
-  get addressId() {
+  get addressId(): UniqueEntityId | undefined {
     return this.props.addressId
   }
 
@@ -37,6 +37,10 @@ export class Patient extends Entity<PatientProps> {
 
   get birthday() {
     return this.props.birthday
+  }
+
+  set addressId(addressId: UniqueEntityId) {
+    this.props.addressId = addressId
   }
 
   set birthday(birthday: Date) {

@@ -1,10 +1,10 @@
-import { VerifyCodeUseCase } from '@/domain/atlas-api/application/use-cases/verify-code-use-case'
 import { PrismaAuthCodeRepository } from '@/infra/db/repositories/prisma-auth-code-repository'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { UnauthorizedError } from '../_errors/unauthorized-error'
 import { getPrismaClient } from '@/infra/db/prisma'
+import { VerifyCodeUseCase } from '@/infra/verify-code-use-case'
 
 function makeVerifyCodeUseCase() {
   const prisma = getPrismaClient()
@@ -24,8 +24,7 @@ export async function VerifyCodeRouter(app: FastifyInstance) {
         }),
         response: {
           200: z.never(),
-          400: z.string(),
-          401: z.string(),
+          401: z.object({ status: z.literal(401), message: z.string() }),
         },
       },
     },
@@ -39,9 +38,11 @@ export async function VerifyCodeRouter(app: FastifyInstance) {
 
         switch (error.constructor) {
           case UnauthorizedError:
-            return reply.status(401).send(error.message)
+            return reply
+              .status(401)
+              .send({ message: error.message, status: 401 })
           default:
-            return reply.status(400).send(error.message)
+            return reply.send()
         }
       }
 

@@ -8,4 +8,6 @@ export interface AppointmentRepository {
   findById(appointmentId: string): Promise<Appointment | null>
   findByEventId(eventId: string): Promise<Appointment | null>
   findManyByProviderId(providerId: string): Promise<Appointment[]>
+
+  getAll(): Promise<Appointment[]>
 }

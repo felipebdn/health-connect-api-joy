@@ -6,4 +6,6 @@ export interface PatientRepository {
   delete(patientId: string): Promise<void>
   findById(id: string): Promise<Patient | null>
   findByEmail(email: string): Promise<Patient | null>
+  findByCPF(email: string): Promise<Patient | null>
+  findByPhone(email: string): Promise<Patient | null>
 }

@@ -16,6 +16,7 @@ export class PrismaInstitutionMapper {
           : undefined,
         cnpj: raw.cnpj ?? undefined,
         createdAt: raw.createdAt,
+        institutionName: raw.institutionName,
       },
       new UniqueEntityId(raw.id)
     )
@@ -30,6 +31,7 @@ export class PrismaInstitutionMapper {
       name: institution.name,
       password: institution.password,
       addressId: institution.addressId?.toValue(),
+      institutionName: institution.institutionName,
       cnpj: institution.cnpj,
       phone: institution.phone,
       createdAt: institution.createdAt,

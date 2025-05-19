@@ -61,6 +61,8 @@ describe('New Password', () => {
       {
         code,
         createdAt: new Date(2024, 7, 1, 8, 50),
+        entity: 'PROVIDER',
+        entityId: provider.id,
       },
       new UniqueEntityId('code-01')
     )

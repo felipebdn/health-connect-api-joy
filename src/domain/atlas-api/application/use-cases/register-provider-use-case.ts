@@ -13,6 +13,8 @@ interface RegisterProviderUseCaseRequest {
   duration: number
   price: number
   cpf: string
+  occupation: string
+  providerCode: string
   password: string
   specialty: string
   education?: string
@@ -48,13 +50,22 @@ export class RegisterProviderUseCase {
       return left(new ResourceAlreadyExistsError('cpf'))
     }
 
+    const isPhoneProviderAlreadyExists =
+      await this.providerRepository.findByPhone(data.phone)
+
+    if (isPhoneProviderAlreadyExists) {
+      return left(new ResourceAlreadyExistsError('phone'))
+    }
+
     const hashedPassword = await this.hashGenerator.hash(data.password)
 
     const newProvider = Provider.create({
       cpf: data.cpf,
       email: data.email,
       name: data.name,
+      providerCode: data.providerCode,
       duration: data.duration * 60,
+      occupation: data.occupation,
       password: hashedPassword,
       specialty: data.specialty,
       description: data.description ?? undefined,

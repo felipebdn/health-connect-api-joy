@@ -29,6 +29,9 @@
 			"recommended": true,
 			"suspicious": {
 				"noFocusedTests": "off"
+			},
+			"complexity":{
+				"useLiteralKeys":"off"
 			}
 		}
 	},

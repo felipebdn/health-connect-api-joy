@@ -24,6 +24,7 @@ export async function EditEventRouter(app: FastifyInstance) {
     .put(
       '/provider/events/:eventId',
       {
+        preHandler: [app.authenticate],
         schema: {
           tags: ['Event'],
           summary: 'Edit an event.',
@@ -34,6 +35,7 @@ export async function EditEventRouter(app: FastifyInstance) {
             startTime: z.coerce.date(),
             endTime: z.coerce.date(),
             startTimezone: z.string(),
+            institutionId: z.string().optional(),
             endTimezone: z.string(),
             recurrenceRule: z.string().optional(),
             currentStartTime: z.coerce.date().optional(),
@@ -43,9 +45,8 @@ export async function EditEventRouter(app: FastifyInstance) {
           }),
           response: {
             200: z.never(),
-            400: z.string(),
-            404: z.string(),
-            409: z.string(),
+            404: z.object({ status: z.literal(404), message: z.string() }),
+            409: z.object({ status: z.literal(409), message: z.string() }),
           },
         },
       },
@@ -61,11 +62,15 @@ export async function EditEventRouter(app: FastifyInstance) {
 
           switch (error.constructor) {
             case ResourceNotFoundError:
-              return reply.status(404).send(error.message)
+              return reply
+                .status(404)
+                .send({ message: error.message, status: 404 })
             case MethodInvalidError:
-              return reply.status(409).send(error.message)
+              return reply
+                .status(409)
+                .send({ message: error.message, status: 409 })
             default:
-              return reply.status(400).send(error.message)
+              return reply.send()
           }
         }
         return reply.status(200).send()

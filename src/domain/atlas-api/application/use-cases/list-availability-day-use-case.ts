@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import * as RRuleLib from 'rrule'
+import RRuleLib from 'rrule'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { type Either, left, right } from '@/core/either'
 import type { ProviderRepository } from '../repositories/provider-repository'

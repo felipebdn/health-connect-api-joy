@@ -22,7 +22,7 @@ interface NewEventUseCaseRequest {
   endTimezone: string
   recurrenceRule?: string
   duration: number
-  institutionId: string
+  institutionId?: string
 }
 
 interface splitEventsProps {
@@ -52,12 +52,13 @@ export class NewEventUseCase {
       return left(new ResourceNotFoundError('provider'))
     }
 
-    const institution = await this.institutionRepository.findById(
-      data.institutionId
-    )
-
-    if (!institution) {
-      return left(new ResourceNotFoundError('institution'))
+    if (data.institutionId) {
+      const institution = await this.institutionRepository.findById(
+        data.institutionId
+      )
+      if (!institution) {
+        return left(new ResourceNotFoundError('institution'))
+      }
     }
 
     const diferenceTime = dayjs(data.endTime).diff(data.startTime, 'seconds')
@@ -81,7 +82,9 @@ export class NewEventUseCase {
         startTimezone: data.startTimezone,
         title: data.title,
         recurrenceRule: data.recurrenceRule,
-        institutionId: new UniqueEntityId(data.institutionId),
+        institutionId: data.institutionId
+          ? new UniqueEntityId(data.institutionId)
+          : undefined,
       })
     )
 

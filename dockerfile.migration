@@ -1,0 +1,14 @@
+# Usar a mesma imagem base
+FROM node:22 AS base
+RUN npm install -g pnpm
+
+# Instalar dependências
+WORKDIR /usr/src/app
+COPY package.json pnpm-lock.yaml prisma ./
+RUN pnpm install --frozen-lockfile
+
+# Copiar o código da aplicação (se necessário, para as migrations)
+COPY . .
+
+# Rodar migrations (não precisamos iniciar a API, só rodar as migrations)
+CMD ["pnpm", "run", "migrate"]

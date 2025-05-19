@@ -1,17 +1,18 @@
-import { Entity } from '@/core/entities/entity'
+import { AggregateRoot } from '@/core/entities/aggregate-root'
 import type { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import type { Optional } from '@/core/types/optional'
+import { MakeAppointmentEvent } from '../events/make-appointment-event'
 
 export interface AppointmentProps {
   providerId: UniqueEntityId
   eventId: UniqueEntityId
-  institutionId: UniqueEntityId
+  institutionId?: UniqueEntityId
   patientId: UniqueEntityId
   description: string | null
   createdAt: Date
 }
 
-export class Appointment extends Entity<AppointmentProps> {
+export class Appointment extends AggregateRoot<AppointmentProps> {
   get providerId() {
     return this.props.providerId
   }
@@ -44,6 +45,12 @@ export class Appointment extends Entity<AppointmentProps> {
       { ...props, createdAt: props.createdAt ?? new Date() },
       id
     )
+
+    const isNewAppointment = !id
+
+    if (isNewAppointment) {
+      appointment.addDomainEvent(new MakeAppointmentEvent(appointment))
+    }
 
     return appointment
   }

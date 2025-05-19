@@ -1,14 +1,27 @@
-import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
 import { makeProvider } from '@test/factories/make-provider'
 import { ListProvidersUseCase } from './list-providers-use-case'
+import { InMemoryProviderRepository } from '@test/repositories/in-memory-provider-repository'
+import { InMemoryEventRepository } from '@test/repositories/in-memory-events-repository'
+import { InMemoryProviderEventRepository } from '@test/repositories/in-memory-provider-event-rating-repository'
+import { InMemoryRatingRepository } from '@test/repositories/in-memory-rating-repository'
 
+let inMemoryProviderEventRepository: InMemoryProviderEventRepository
 let inMemoryProviderRepository: InMemoryProviderRepository
+let inMemoryEventRepository: InMemoryEventRepository
+let inMemoryRatingRepository: InMemoryRatingRepository
 let sut: ListProvidersUseCase
 
 describe('List Providers Use Case', () => {
   beforeEach(() => {
     inMemoryProviderRepository = new InMemoryProviderRepository()
-    sut = new ListProvidersUseCase(inMemoryProviderRepository)
+    inMemoryEventRepository = new InMemoryEventRepository()
+    inMemoryRatingRepository = new InMemoryRatingRepository()
+    inMemoryProviderEventRepository = new InMemoryProviderEventRepository(
+      inMemoryProviderRepository,
+      inMemoryEventRepository,
+      inMemoryRatingRepository
+    )
+    sut = new ListProvidersUseCase(inMemoryProviderEventRepository)
   })
 
   it('should list all providers when no filters are applied', async () => {
@@ -28,7 +41,10 @@ describe('List Providers Use Case', () => {
     if (result) {
       expect(result.providers).toHaveLength(2)
       expect(result.providers).toEqual(
-        expect.arrayContaining([provider1, provider2])
+        expect.arrayContaining([
+          expect.objectContaining({ provider: provider1 }),
+          expect.objectContaining({ provider: provider2 }),
+        ])
       )
     }
   })
@@ -50,7 +66,10 @@ describe('List Providers Use Case', () => {
     if (result) {
       expect(result.providers).toHaveLength(2)
       expect(result.providers).toEqual(
-        expect.arrayContaining([provider1, provider2])
+        expect.arrayContaining([
+          expect.objectContaining({ provider: provider1 }),
+          expect.objectContaining({ provider: provider2 }),
+        ])
       )
     }
   })
@@ -71,7 +90,9 @@ describe('List Providers Use Case', () => {
 
     if (result) {
       expect(result.providers).toHaveLength(1)
-      expect(result.providers[0]).toEqual(provider2)
+      expect(result.providers[0]).toEqual(
+        expect.objectContaining({ provider: provider2 })
+      )
     }
   })
 
@@ -109,7 +130,9 @@ describe('List Providers Use Case', () => {
     const result = await sut.execute({ amount: 1, limit: 1 })
 
     expect(result.providers).toHaveLength(1)
-    expect(result.providers[0]).toEqual(provider3)
+    expect(result.providers[0]).toEqual(
+      expect.objectContaining({ provider: provider3 })
+    )
   })
 
   it('should return an empty list if no providers match the filters', async () => {

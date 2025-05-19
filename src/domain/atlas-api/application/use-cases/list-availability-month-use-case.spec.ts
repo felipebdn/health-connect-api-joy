@@ -15,9 +15,7 @@ describe('List availability of month', () => {
   beforeEach(() => {
     inMemoryProviderRepository = new InMemoryProviderRepository()
     inMemoryAppointmentRepository = new InMemoryAppointmentRepository()
-    inMemoryEventRepository = new InMemoryEventRepository(
-      inMemoryAppointmentRepository
-    )
+    inMemoryEventRepository = new InMemoryEventRepository()
 
     sut = new ListAvailabilityByMonthUseCase(
       inMemoryEventRepository,
