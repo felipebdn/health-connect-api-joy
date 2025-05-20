@@ -26,6 +26,6 @@ jobs:
           docker-compose build
 
       # 4. Rodar as migrations no banco de dados
-      - name: Run database migrations
+      - name: Run Prisma migrations on Neon
         run: |
-          docker-compose run --rm api pnpm run migrate
+          docker-compose run --rm -e DATABASE_URL=${{ secrets.NEON_DATABASE_URL }} migrate
