@@ -1,4 +1,4 @@
-name: atlas-api
+version: "3.8"
 
 networks:
   mynetwork:
