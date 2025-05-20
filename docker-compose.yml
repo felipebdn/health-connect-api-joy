@@ -34,8 +34,6 @@ services:
       - "3333:3333"
     env_file:
       - .env
-    environment:
-      - DATABASE_URL
     networks:
       - mynetwork
     command: >

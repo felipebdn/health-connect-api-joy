@@ -1,5 +1,5 @@
 # Etapa 1: Instalação de dependências com Bun
-FROM oven/bun:1.1.13 as dependencies
+FROM oven/bun:1.1.13 AS dependencies
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ COPY bun.lockb package.json ./
 RUN bun install --frozen-lockfile
 
 # Etapa 2: Build com Node.js
-FROM node:20-alpine as build
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
@@ -26,7 +26,7 @@ RUN npx prisma generate
 RUN npx swc src -d dist
 
 # Etapa 3: Produção (Node puro ou Distroless opcionalmente)
-FROM node:20-alpine as production
+FROM node:20-alpine AS production
 
 WORKDIR /app
 
