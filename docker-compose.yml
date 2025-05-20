@@ -35,7 +35,7 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgres://docker:docker@db-nest-saude:5432/atlasdb
+      - DATABASE_URL
     networks:
       - mynetwork
     command: >
@@ -49,7 +49,7 @@ services:
       pg:
         condition: service_healthy
     environment:
-      - DATABASE_URL=postgres://docker:docker@db-nest-saude:5432/atlasdb
+      - DATABASE_URL
     networks:
       - mynetwork
     command: >
