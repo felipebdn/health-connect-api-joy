@@ -2,6 +2,8 @@ name: Run Migrations
 
 on:
   push:
+    paths:
+      - prisma/migrations/**
     branches:
       - main
 
@@ -10,24 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # 1. Checkout do código
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      # 2. Configuração do Docker Compose
-      - name: Set up Docker Compose
-        run: |
-          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          chmod +x /usr/local/bin/docker-compose
+      - name: Setup Node
+        uses: actions/setup-node@v3
 
-      # 3. Build das imagens Docker (caso necessário)
-      - name: Build Docker images
-        run: |
-          docker-compose build
+      - name: Install dependencies
+        run: npm install
 
-      # 4. Rodar as migrations no banco de dados
-      - name: Run Prisma migrations on Neon
+      - name: Apply all pending migrations to the database
+        run: npx prisma migrate deploy
         env:
-          DIRECT_URL: ${{ vars.NEON_DATABASE_URL }}
-        run: |
-          docker-compose run --rm migrate
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
