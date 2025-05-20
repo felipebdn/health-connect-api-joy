@@ -48,8 +48,6 @@ services:
     depends_on:
       pg:
         condition: service_healthy
-    environment:
-      - DATABASE_URL
     networks:
       - mynetwork
     command: >
