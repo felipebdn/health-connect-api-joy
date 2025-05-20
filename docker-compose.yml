@@ -39,7 +39,7 @@ services:
     networks:
       - mynetwork
     command: >
-      sh -c "pnpm run start"
+      sh -c "npm run start"
 
   migrate:
     build:
@@ -53,4 +53,4 @@ services:
     networks:
       - mynetwork
     command: >
-      sh -c "pnpm run migrate"  # Altere para o comando de migration que você usa no projeto
+      sh -c "bun run migrate"  # Altere para o comando de migration que você usa no projeto
