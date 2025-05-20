@@ -32,8 +32,6 @@ services:
         condition: service_healthy
     ports:
       - "3333:3333"
-    env_file:
-      - .env
     networks:
       - mynetwork
     command: >
