@@ -3,12 +3,10 @@ import { mockProviders } from '@/lib/mock/providers'
 import bcryptjs from 'bcryptjs'
 import { getPrismaClient } from './prisma'
 import { PrismaProviderMapper } from './mappers/prisma-provider-mapper'
-import RRuleLib from 'rrule'
+import { RRule } from '@/lib/rrule'
 import { EventEntity } from '@/domain/atlas-api/enterprise/entities/event'
 import dayjs from 'dayjs'
 import { PrismaEventMapper } from './mappers/prisma-event-mapper'
-
-const { RRule } = RRuleLib
 
 const timeZone = 'America/Sao_Paulo'
 

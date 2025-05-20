@@ -1,14 +1,27 @@
-import type { listProvidersResponse } from '@/domain/atlas-api/application/repositories/provider-event-rating-repository'
+import type {
+  findByFilterWithEventsResponse,
+  findByInstitutionProps,
+  findByInstitutionResponse,
+  ProviderEventRatingRepository,
+} from '@/domain/atlas-api/application/repositories/provider-event-rating-repository'
 import type { ProviderRepository } from '@/domain/atlas-api/application/repositories/provider-repository'
 import type { RatingRepository } from '@/domain/atlas-api/application/repositories/rating-repository'
 import type { EventRepository } from '@/domain/atlas-api/application/repositories/recurrence-repository'
 
-export class InMemoryProviderEventRepository {
+export class InMemoryProviderEventRepository
+  implements ProviderEventRatingRepository
+{
   constructor(
     private providerRepository: ProviderRepository,
     private eventRepository: EventRepository,
     private ratingRepository: RatingRepository
   ) {}
+
+  async findByInstitution(
+    data: findByInstitutionProps
+  ): Promise<findByInstitutionResponse[]> {
+    throw new Error('Method not implemented.')
+  }
 
   async findByFilterWithEvents(data: {
     name?: string
@@ -16,7 +29,7 @@ export class InMemoryProviderEventRepository {
     price?: number
     amount?: number
     page?: number
-  }): Promise<listProvidersResponse[]> {
+  }): Promise<findByFilterWithEventsResponse[]> {
     const { name, specialty, amount, page, price } = data
 
     let filteredProviders = await this.providerRepository.getAll()
@@ -44,7 +57,7 @@ export class InMemoryProviderEventRepository {
 
     filteredProviders.sort((a, b) => a.name.localeCompare(b.name))
 
-    const providersWithYourEvents: listProvidersResponse[] = []
+    const providersWithYourEvents: findByFilterWithEventsResponse[] = []
 
     for (const provider of filteredProviders) {
       const events = await this.eventRepository.findManyEventsAvailable(

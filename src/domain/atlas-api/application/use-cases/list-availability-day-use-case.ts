@@ -1,11 +1,9 @@
 import dayjs from 'dayjs'
-import RRuleLib from 'rrule'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { type Either, left, right } from '@/core/either'
 import type { ProviderRepository } from '../repositories/provider-repository'
 import type { EventRepository } from '../repositories/recurrence-repository'
-
-const { RRule } = RRuleLib
+import { RRule } from '@/lib/rrule'
 
 export interface Schedules {
   eventId: string
@@ -70,7 +68,7 @@ export class ListAvailabilityDayUseCase {
             .split(',')
             .map((value) => new Date(value))
 
-          const daysFiltered = timesResult.filter((day) => {
+          const daysFiltered = timesResult.filter((day: Date) => {
             return !datesExceptions.some((dayException) =>
               dayjs(day).isSame(dayException, 'day')
             )

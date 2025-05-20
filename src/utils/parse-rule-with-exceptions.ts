@@ -1,6 +1,4 @@
-import RRuleLib from 'rrule'
-
-const { RRuleSet, rrulestr } = RRuleLib
+import { rrulestr } from '@/lib/rrule'
 
 type RecurrenceOptions = {
   dtStart: Date | string

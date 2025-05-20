@@ -1,10 +1,9 @@
 import type { InstitutionProviderEventRepository } from '../repositories/institution-provider-event-repository'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
-import RRuleLib from 'rrule'
 import type { Provider } from '../../enterprise/entities/provider'
+import { RRule } from '@/lib/rrule'
 
-const { RRule } = RRuleLib
 dayjs.extend(isBetween)
 
 interface ListAvailabilitiesByInstitutionUseCaseRequest {

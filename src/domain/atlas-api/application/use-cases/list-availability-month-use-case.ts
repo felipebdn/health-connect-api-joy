@@ -1,13 +1,11 @@
 import dayjs from 'dayjs'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
-import RRuleLib from 'rrule'
+import { RRule } from '@/lib/rrule'
 
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { type Either, left, right } from '@/core/either'
 import type { ProviderRepository } from '../repositories/provider-repository'
 import type { EventRepository } from '../repositories/recurrence-repository'
-
-const { RRule } = RRuleLib
 
 dayjs.extend(isSameOrAfter)
 interface ListAvailabilityByMonthUseCaseRequest {
@@ -53,14 +51,14 @@ export class ListAvailabilityByMonthUseCase {
       if (raw.recurrenceRule && raw.title === 'availability') {
         const days = RRule.fromString(raw.recurrenceRule)
           .between(firstDayOfMonth, lastDayOfMonth, true)
-          .filter((day) => dayjs(day).isSameOrAfter(raw.startTime))
+          .filter((day: Date) => dayjs(day).isSameOrAfter(raw.startTime))
 
         if (raw.recurrenceException) {
           const datesExceptions = raw.recurrenceException
             .split(',')
             .map((value) => new Date(value))
 
-          const daysFiltered = days.filter((day) => {
+          const daysFiltered = days.filter((day: Date) => {
             return !datesExceptions.some((dayException) =>
               dayjs(day).isSame(dayException, 'day')
             )

@@ -1,12 +1,9 @@
 import type { Provider } from '../../enterprise/entities/provider'
-import RRuleLib from 'rrule'
 import { EventEntity } from '../../enterprise/entities/event'
 import type { ProviderEventRatingRepository } from '../repositories/provider-event-rating-repository'
 import type { Rating } from '../../enterprise/entities/rating'
 import { parseRecurrenceWithExceptions } from '@/utils/parse-rule-with-exceptions'
 import type { Address } from '../../enterprise/entities/address'
-
-const { RRule } = RRuleLib
 
 interface ListProvidersUseCaseRequest {
   name?: string

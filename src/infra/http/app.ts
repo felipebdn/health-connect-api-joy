@@ -130,7 +130,7 @@ export async function bootstrap() {
   app.register(ListEventsProviderRouter)
   app.register(NewEventRouter)
 
-  //provider
+  // provider
   app.register(ChangeDurationRouter)
   app.register(GetProviderRouter)
   app.register(NewPasswordRouter)
