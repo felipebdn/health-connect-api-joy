@@ -12,6 +12,7 @@ RUN bun install --frozen-lockfile
 
 # Copiar restante da aplicação
 COPY . .
+RUN rm .env
 
 # Rodar migrations usando Bun
 CMD ["bun", "run", "migrate"]
