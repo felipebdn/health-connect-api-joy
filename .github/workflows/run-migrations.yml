@@ -28,6 +28,6 @@ jobs:
       # 4. Rodar as migrations no banco de dados
       - name: Run Prisma migrations on Neon
         env:
-          DIRECT_URL: ${{ secrets.NEON_DATABASE_URL }}
+          DIRECT_URL: ${{ vars.NEON_DATABASE_URL }}
         run: |
           docker-compose run --rm migrate
