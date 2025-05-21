@@ -1,8 +1,17 @@
 -- CreateEnum
+CREATE TYPE "StatusAffiliation" AS ENUM ('ACTIVE', 'PAUSED');
+
+-- CreateEnum
 CREATE TYPE "Title" AS ENUM ('availability', 'appointment');
 
 -- CreateEnum
 CREATE TYPE "EntityEnumAuthCode" AS ENUM ('INSTITUTION', 'PATIENT', 'PROVIDER');
+
+-- CreateEnum
+CREATE TYPE "TypeUser" AS ENUM ('INSTITUTION', 'PATIENT', 'PROVIDER');
+
+-- CreateEnum
+CREATE TYPE "TypeNotification" AS ENUM ('MAKE_RATING', 'APPOINTMENT_ALERT');
 
 -- CreateTable
 CREATE TABLE "providers" (
@@ -15,6 +24,7 @@ CREATE TABLE "providers" (
     "providerCode" TEXT NOT NULL,
     "duration" INTEGER NOT NULL,
     "birthday" TIMESTAMP(3) NOT NULL,
+    "occupation" TEXT NOT NULL,
     "specialty" TEXT NOT NULL,
     "price" INTEGER NOT NULL,
     "education" TEXT,
@@ -22,6 +32,20 @@ CREATE TABLE "providers" (
     "address_id" TEXT,
 
     CONSTRAINT "providers_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ratings" (
+    "id" TEXT NOT NULL,
+    "rating" INTEGER NOT NULL,
+    "description" TEXT,
+    "name" TEXT NOT NULL,
+    "provider_id" TEXT NOT NULL,
+    "appointment_id" TEXT NOT NULL,
+    "patient_id" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ratings_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -44,6 +68,7 @@ CREATE TABLE "provider_institution" (
     "provider_id" TEXT NOT NULL,
     "institution_id" TEXT NOT NULL,
     "enrolledAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "status" "StatusAffiliation" NOT NULL DEFAULT 'ACTIVE',
 
     CONSTRAINT "provider_institution_pkey" PRIMARY KEY ("provider_id","institution_id")
 );
@@ -89,7 +114,7 @@ CREATE TABLE "events" (
     "recurrence_exception" TEXT,
     "recurrence_id" TEXT,
     "provider_id" TEXT NOT NULL,
-    "institution_id" TEXT NOT NULL,
+    "institution_id" TEXT,
 
     CONSTRAINT "events_pkey" PRIMARY KEY ("id")
 );
@@ -111,11 +136,25 @@ CREATE TABLE "appointments" (
     "description" TEXT,
     "provider_id" TEXT NOT NULL,
     "event_id" TEXT NOT NULL,
-    "institution_id" TEXT NOT NULL,
+    "institution_id" TEXT,
     "patient_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "appointments_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "notifications" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "typeNotification" "TypeNotification" NOT NULL,
+    "content" TEXT NOT NULL,
+    "read_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "recipientId" TEXT NOT NULL,
+    "typeUser" "TypeUser" NOT NULL,
+
+    CONSTRAINT "notifications_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -152,6 +191,15 @@ CREATE UNIQUE INDEX "auth-codes_code_key" ON "auth-codes"("code");
 ALTER TABLE "providers" ADD CONSTRAINT "providers_address_id_fkey" FOREIGN KEY ("address_id") REFERENCES "addresses"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "ratings" ADD CONSTRAINT "ratings_appointment_id_fkey" FOREIGN KEY ("appointment_id") REFERENCES "appointments"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ratings" ADD CONSTRAINT "ratings_provider_id_fkey" FOREIGN KEY ("provider_id") REFERENCES "providers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ratings" ADD CONSTRAINT "ratings_patient_id_fkey" FOREIGN KEY ("patient_id") REFERENCES "patients"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "institutions" ADD CONSTRAINT "institutions_address_id_fkey" FOREIGN KEY ("address_id") REFERENCES "addresses"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -164,7 +212,7 @@ ALTER TABLE "provider_institution" ADD CONSTRAINT "provider_institution_institut
 ALTER TABLE "patients" ADD CONSTRAINT "patients_address_id_fkey" FOREIGN KEY ("address_id") REFERENCES "addresses"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "events" ADD CONSTRAINT "events_institution_id_fkey" FOREIGN KEY ("institution_id") REFERENCES "institutions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "events" ADD CONSTRAINT "events_institution_id_fkey" FOREIGN KEY ("institution_id") REFERENCES "institutions"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "events" ADD CONSTRAINT "events_provider_id_fkey" FOREIGN KEY ("provider_id") REFERENCES "providers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -173,7 +221,7 @@ ALTER TABLE "events" ADD CONSTRAINT "events_provider_id_fkey" FOREIGN KEY ("prov
 ALTER TABLE "events" ADD CONSTRAINT "events_recurrence_id_fkey" FOREIGN KEY ("recurrence_id") REFERENCES "events"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "appointments" ADD CONSTRAINT "appointments_institution_id_fkey" FOREIGN KEY ("institution_id") REFERENCES "institutions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "appointments" ADD CONSTRAINT "appointments_institution_id_fkey" FOREIGN KEY ("institution_id") REFERENCES "institutions"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "appointments" ADD CONSTRAINT "appointments_provider_id_fkey" FOREIGN KEY ("provider_id") REFERENCES "providers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

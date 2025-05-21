@@ -1,12 +1,12 @@
 {
   "name": "@atlas/api",
   "version": "1.0.0",
-  "main": "dist/src/infra/http/server.js",
-  "type": "commonjs",
+  "main": "dist/infra/http/server.cjs",
+  "type": "module",
   "scripts": {
     "dev": "dotenv -e .env tsx watch src/infra/http/server.ts",
-    "build": "swc src -d dist",
-    "start": "dotenv -e .env node dist/src/infra/http/server.js",
+    "build": "tsup src --out-dir dist",
+    "start": "dotenv -e .env node dist/infra/http/server.cjs",
     "test": "dotenv -e .env vitest run",
     "test:watch": "dotenv -e .env vitest",
     "test:e2e": "dotenv -e .env -- vitest run --config ./vitest.config.e2e.mts",
@@ -40,8 +40,6 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@faker-js/faker": "^9.2.0",
-    "@swc/cli": "^0.5.1",
-    "@swc/core": "^1.9.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.8.5",
     "@types/supertest": "^6.0.2",
@@ -49,9 +47,9 @@
     "dotenv-cli": "^7.4.2",
     "prisma": "^6.1.0",
     "supertest": "^7.0.0",
+    "tsup": "^8.5.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.6.3",
-    "unplugin-swc": "^1.5.1",
+    "typescript": "^5.8.3",
     "vite-tsconfig-paths": "^5.1.0",
     "vitest": "^2.1.4",
     "yarn-run-all": "^3.1.1"

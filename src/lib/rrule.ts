@@ -1,4 +1,6 @@
-const rrule = require('rrule')
-export const RRule = rrule.RRule
-export const RRuleSet = rrule.RRuleSet
-export const rrulestr = rrule.rrulestr
+import rruleCjs from 'rrule'
+
+// Acessa os valores corretamente do default export do módulo CJS
+const { RRule, RRuleSet, rrulestr } = rruleCjs
+
+export { RRule, RRuleSet, rrulestr }
