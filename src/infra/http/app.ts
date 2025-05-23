@@ -18,7 +18,7 @@ import { VerifyCodeRouter } from './routes/auth/verify-code'
 import { NewPasswordRouter } from './routes/provider/new-password'
 import { RegisterProviderRouter } from './routes/provider/register-provider'
 import { UpdateProviderRouter } from './routes/provider/update-provider'
-import { RegisterInstitutionRouter } from './routes/institution/register-provider'
+import { RegisterInstitutionRouter } from './routes/institution/register-institution'
 import { RegisterPatientRouter } from './routes/patient/register-patient'
 import { GetUserRouter } from './routes/auth/get-user'
 import { ForgetPasswordRouter } from './routes/auth/forget-password'
@@ -42,6 +42,8 @@ import { ListAffiliationRouter } from './routes/affiliation/list-affiliation'
 import { EditAffiliationRouter } from './routes/affiliation/edit-affiliation'
 import { DeleteAffiliationRouter } from './routes/affiliation/delete-affiliation'
 import { listAvailabilitiesByInstitution } from './routes/institution/list-availabilities-by-institution'
+import { SendInvitationProviderRouter } from './routes/affiliation/send-invitation-provider'
+import { AffiliationConfirmingRouter } from './routes/affiliation/affiliation-confirming'
 
 export async function bootstrap() {
   const app = fastify().withTypeProvider<ZodTypeProvider>()
@@ -147,6 +149,7 @@ export async function bootstrap() {
   app.register(RegisterInstitutionRouter)
   app.register(listProvidersByInstitution)
   app.register(listAvailabilitiesByInstitution)
+  app.register(SendInvitationProviderRouter)
 
   // patient
   app.register(RegisterPatientRouter)
@@ -159,6 +162,7 @@ export async function bootstrap() {
   app.register(UpdateAddressRouter)
 
   // Affiliation
+  app.register(AffiliationConfirmingRouter)
   app.register(ListAffiliationRouter)
   app.register(EditAffiliationRouter)
   app.register(DeleteAffiliationRouter)

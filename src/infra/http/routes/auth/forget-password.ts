@@ -5,10 +5,10 @@ import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { ForgetPasswordUseCase } from '@/domain/atlas-api/application/use-cases/forget-password-use-case'
 import { PrismaAuthCodeRepository } from '@/infra/db/repositories/prisma-auth-code-repository'
 import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
-import { EmailJsService } from '@/infra/email/emailjs-service'
 import { getPrismaClient } from '@/infra/db/prisma'
 import { PrismaPatientRepository } from '@/infra/db/repositories/prisma-patient-repository'
 import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-institution-repository'
+import { ResendService } from '@/infra/email/emailjs-service'
 
 function makeForgetPasswordUseCase() {
   const prisma = getPrismaClient()
@@ -16,13 +16,13 @@ function makeForgetPasswordUseCase() {
   const institutionRepository = new PrismaInstitutionRepository(prisma)
   const patientRepository = new PrismaPatientRepository(prisma)
   const authCodeRepository = new PrismaAuthCodeRepository(prisma)
-  const emailJsService = new EmailJsService()
+  const resendService = new ResendService()
   return new ForgetPasswordUseCase(
     providerRepository,
     institutionRepository,
     patientRepository,
     authCodeRepository,
-    emailJsService
+    resendService
   )
 }
 

@@ -1,71 +1,33 @@
-import { env } from '@/env'
-import { sendEmail } from '@/utils/axios'
 import type {
   EmailService,
-  sendMessageConfirmationAppointmentProps,
-  sendMessageForgetPasswordProps,
+  SendEmailProps,
 } from '@/domain/atlas-api/application/services/email'
+import { env } from '@/env'
+import { Resend } from 'resend'
 
-export class EmailJsService implements EmailService {
-  async sendMessageConfirmationAppointment(
-    data: sendMessageConfirmationAppointmentProps
-  ): Promise<boolean> {
-    const response = await sendEmail.post(
-      '/send',
-      {
-        service_id: env.EMAILJS_SERVICE_ID,
-        template_id: env.EMAILJS_TEMPLATE_ID_PATIENT,
-        user_id: env.PUBLIC_KEY_EMAILJS,
-        template_params: {
-          action_subject: data.action_subject,
-          action: data.action,
-          provider_name: data.provider_name,
-          patient_name: data.patient_name,
-          date: data.date,
-          provider_email: data.provider_email,
-          patient_email: data.patient_email,
-        },
-        accessToken: env.PRIVATE_KEY_EMAILJS,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+export class ResendService implements EmailService {
+  async sendEmail(
+    data: SendEmailProps
+  ): Promise<{ code: number; message: string | undefined }> {
+    const resend = new Resend(env.RESEND_API_KEY)
+
+    const { data: resultSendEmail, error } = await resend.emails.send({
+      from: `Acme <${data.from}>`,
+      to: [data.to],
+      subject: data.subject,
+      html: data.html,
+    })
+
+    if (resultSendEmail) {
+      return {
+        code: 200,
+        message: 'Email sent successfully',
       }
-    )
-    if (response.status !== 200) {
-      return false
     }
 
-    return true
-  }
-
-  async sendMessageForgetPassword(
-    data: sendMessageForgetPasswordProps
-  ): Promise<boolean> {
-    const response = await sendEmail.post(
-      '/send',
-      {
-        service_id: env.EMAILJS_SERVICE_ID,
-        template_id: env.EMAILJS_TEMPLATE_ID_PROVIDER,
-        user_id: env.PUBLIC_KEY_EMAILJS,
-        template_params: {
-          recovery_email: data.recovery_email,
-          recovery_code: data.recovery_code,
-        },
-        accessToken: env.PRIVATE_KEY_EMAILJS,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
-
-    if (response.status !== 200) {
-      return false
+    return {
+      code: 400,
+      message: error?.message,
     }
-
-    return true
   }
 }

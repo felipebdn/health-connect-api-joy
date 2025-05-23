@@ -73,9 +73,11 @@ export class ForgetPasswordUseCase {
     const authLink = new URL(`${URL_REDIRECT}/new-password`)
     authLink.searchParams.set('code', code)
 
-    const sendEmailResult = await this.emailService.sendMessageForgetPassword({
-      recovery_code: authLink.toString(),
-      recovery_email: email,
+    const sendEmailResult = await this.emailService.sendEmail({
+      from: 'contact@seuatlas.com.br',
+      html: '',
+      subject: 'Recuperar senha',
+      to: email,
     })
     if (sendEmailResult) await this.authCodesRepository.create(authCode)
 

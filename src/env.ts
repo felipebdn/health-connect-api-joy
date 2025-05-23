@@ -9,15 +9,8 @@ const envSchema = z.object({
 
   JWT_SECRET_KEY: z.string(),
 
-  PUBLIC_KEY_EMAILJS: z.string(),
-  PRIVATE_KEY_EMAILJS: z.string(),
+  RESEND_API_KEY: z.string(),
 
-  EMAILJS_SERVICE_ID: z.string(),
-
-  EMAILJS_TEMPLATE_ID_PROVIDER: z.string(),
-  EMAILJS_TEMPLATE_ID_PATIENT: z.string(),
-
-  BASE_URL_EMAILJS: z.string().url(),
   BASE_URL_FRONT: z.string().url(),
 })
 

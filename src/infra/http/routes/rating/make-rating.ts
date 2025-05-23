@@ -45,7 +45,7 @@ export async function NewRatingRouter(app: FastifyInstance) {
         response: {
           201: z.never(),
           404: z.object({ status: z.literal(404), message: z.string() }),
-          409: z.object({ status: z.literal(409), message: z.string() }),
+          409: response409,
         },
       },
     },
@@ -57,17 +57,12 @@ export async function NewRatingRouter(app: FastifyInstance) {
       if (result.isLeft()) {
         const error = result.value
 
-        switch (error.constructor) {
-          case ResourceNotFoundError:
-            return reply
-              .status(404)
-              .send({ message: error.message, status: 404 })
-          case ResourceAlreadyExistsError:
-            return reply
-              .status(409)
-              .send({ message: error.message, status: 409 })
-          default:
-            return reply.send()
+        if (error instanceof ResourceNotFoundError) {
+          return reply.status(404).send({ message: error.message, status: 404 })
+        }
+
+        if (error instanceof ResourceAlreadyExistsError) {
+          return reply.status(409).send(error.toJSON())
         }
       }
 

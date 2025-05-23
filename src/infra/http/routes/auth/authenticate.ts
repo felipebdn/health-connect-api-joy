@@ -1,6 +1,5 @@
 import { WrongCredentialsError } from '@/domain/atlas-api/application/errors/wrong-credentials-error'
 import { AuthenticateUseCase } from '@/domain/atlas-api/application/use-cases/authenticate-use-case'
-import { BcryptHasher } from '@/infra/criptography/bcrypt-hasher'
 import { getPrismaClient } from '@/infra/db/prisma'
 import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-institution-repository'
 import { PrismaPatientRepository } from '@/infra/db/repositories/prisma-patient-repository'
@@ -9,6 +8,7 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { Provider } from '@/domain/atlas-api/enterprise/entities/provider'
+import { BcryptHasher } from '@/infra/criptography/bcrypt-hasher'
 
 function makeAuthenticateUseCase() {
   const prisma = getPrismaClient()

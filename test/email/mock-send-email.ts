@@ -1,19 +1,12 @@
 import type {
   EmailService,
-  sendMessageConfirmationAppointmentProps,
-  sendMessageForgetPasswordProps,
+  SendEmailProps,
 } from '@/domain/atlas-api/application/services/email'
 
 export class MockSendEmail implements EmailService {
-  async sendMessageConfirmationAppointment(
-    _: sendMessageConfirmationAppointmentProps
-  ): Promise<boolean> {
-    return true
-  }
-
-  async sendMessageForgetPassword(
-    _: sendMessageForgetPasswordProps
-  ): Promise<boolean> {
-    return true
+  async sendEmail(
+    data: SendEmailProps
+  ): Promise<{ code: number; message: string | undefined }> {
+    return { code: 200, message: 'Email sent successfully' }
   }
 }

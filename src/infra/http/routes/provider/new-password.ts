@@ -5,12 +5,12 @@ import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
 import { NewPasswordUseCase } from '@/domain/atlas-api/application/use-cases/new-password-use-case'
 import { PrismaAuthCodeRepository } from '@/infra/db/repositories/prisma-auth-code-repository'
-import { BcryptHasher } from '@/infra/criptography/bcrypt-hasher'
 import { UnauthorizedError } from '../_errors/unauthorized-error'
 import { ConflictActionError } from '@/domain/atlas-api/application/use-cases/errors/conflit-errror-action'
 import { getPrismaClient } from '@/infra/db/prisma'
 import { PrismaPatientRepository } from '@/infra/db/repositories/prisma-patient-repository'
 import { PrismaInstitutionRepository } from '@/infra/db/repositories/prisma-institution-repository'
+import { BcryptHasher } from '@/infra/criptography/bcrypt-hasher'
 
 function makeNewPasswordUseCase() {
   const prisma = getPrismaClient()

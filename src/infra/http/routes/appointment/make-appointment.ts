@@ -5,7 +5,7 @@ import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { PrismaAppointmentRepository } from '@/infra/db/repositories/prisma-appointment-repository'
 import { PrismaEventRepository } from '@/infra/db/repositories/prisma-events-repository'
 import { MakeAppointmentUseCase } from '@/domain/atlas-api/application/use-cases/make-appointment-use-case'
-import { EmailJsService } from '@/infra/email/emailjs-service'
+import { ResendService } from '@/infra/email/emailjs-service'
 import { PrismaProviderRepository } from '@/infra/db/repositories/prisma-provider-repository'
 import { EmailNotSent } from '@/domain/atlas-api/application/errors/email-not-sent'
 import { MethodInvalidError } from '@/domain/atlas-api/application/errors/method-invalid-error'
@@ -18,7 +18,7 @@ function makeMakeAppointmentUseCase() {
   const appointmentRepository = new PrismaAppointmentRepository(prisma)
   const providerRepository = new PrismaProviderRepository(prisma)
   const patientRepository = new PrismaPatientRepository(prisma)
-  const emailService = new EmailJsService()
+  const emailService = new ResendService()
   return new MakeAppointmentUseCase(
     eventRepository,
     appointmentRepository,

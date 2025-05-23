@@ -27,10 +27,11 @@ model Provider {
 
   address Address? @relation(fields: [addressId], references: [id])
 
-  events       Event[]
-  appointments Appointment[]
-  institutions ProviderInstitution[]
-  rating       Rating[]
+  events          Event[]
+  appointments    Appointment[]
+  institutions    ProviderInstitution[]
+  rating          Rating[]
+  AffiliationCode AffiliationCode[]
 
   @@map("providers")
 }
@@ -65,9 +66,10 @@ model Institution {
 
   address Address? @relation(fields: [addressId], references: [id])
 
-  providers    ProviderInstitution[]
-  appointments Appointment[]
-  events       Event[]
+  providers       ProviderInstitution[]
+  appointments    Appointment[]
+  events          Event[]
+  AffiliationCode AffiliationCode[]
 
   @@map("institutions")
 }
@@ -167,7 +169,20 @@ model AuthCode {
   entityId  String
   createdAt DateTime           @default(now()) @map("created_at")
 
-  @@map("auth-codes")
+  @@map("auth_codes")
+}
+
+model AffiliationCode {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  providerId    String   @map("provider_id")
+  institutionId String   @map("institution_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  provider    Provider    @relation(fields: [providerId], references: [id])
+  institution Institution @relation(fields: [institutionId], references: [id])
+
+  @@map("affiliation_codes")
 }
 
 model Appointment {

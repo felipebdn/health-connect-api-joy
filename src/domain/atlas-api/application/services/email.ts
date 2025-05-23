@@ -1,24 +1,12 @@
-export interface sendMessageConfirmationAppointmentProps {
-  action_subject: string
-  action: string
-  provider_name: string
-  patient_name: string
-  date: string
-  provider_email: string
-  patient_email: string
-}
-
-export interface sendMessageForgetPasswordProps {
-  recovery_email: string
-  recovery_code: string
+export interface SendEmailProps {
+  from: string
+  to: string
+  subject: string
+  html: string
 }
 
 export interface EmailService {
-  sendMessageConfirmationAppointment(
-    data: sendMessageConfirmationAppointmentProps
-  ): Promise<boolean>
-
-  sendMessageForgetPassword(
-    data: sendMessageForgetPasswordProps
-  ): Promise<boolean>
+  sendEmail(
+    data: SendEmailProps
+  ): Promise<{ code: number; message: string | undefined }>
 }
