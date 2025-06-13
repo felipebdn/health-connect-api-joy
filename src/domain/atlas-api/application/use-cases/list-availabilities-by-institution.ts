@@ -35,10 +35,20 @@ export class ListAvailabilitiesByInstitutionUseCase {
     for (const data of providers) {
       for (const event of data.events) {
         if (event.recurrenceRule && event.title === 'availability') {
+          const datesExceptions = event.recurrenceException?.split(',') ?? []
+
           const occurrences = RRule.fromString(event.recurrenceRule).between(
             startOfDay,
             endOfDay,
-            true // inclusive
+            true, // inclusive,
+            (date) => {
+              for (const exception of datesExceptions) {
+                if (dayjs(exception).isSame(date, 'day')) {
+                  return false
+                }
+              }
+              return true
+            }
           )
 
           const eventTime = dayjs(event.startTime)

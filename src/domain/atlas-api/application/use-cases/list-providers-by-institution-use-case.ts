@@ -4,6 +4,7 @@ import type { Appointment } from '../../enterprise/entities/appointment'
 import type { EventEntity } from '../../enterprise/entities/event'
 import type { Rating } from '../../enterprise/entities/rating'
 import type { ProviderEventRatingRepository } from '../repositories/provider-event-rating-repository'
+import type { Affiliation } from '../../enterprise/entities/affiliation'
 
 interface ListProvidersByInstitutionRequest {
   institutionId: string
@@ -16,6 +17,7 @@ type ListProvidersByInstitutionResponse = {
     provider: Provider
     appointments: { appointment: Appointment; event: EventEntity }[]
     ratings: Rating[]
+    affiliation: Affiliation
   }[]
 }
 

@@ -44,6 +44,8 @@ import { DeleteAffiliationRouter } from './routes/affiliation/delete-affiliation
 import { listAvailabilitiesByInstitution } from './routes/institution/list-availabilities-by-institution'
 import { SendInvitationProviderRouter } from './routes/affiliation/send-invitation-provider'
 import { AffiliationConfirmingRouter } from './routes/affiliation/affiliation-confirming'
+import { RevokeAffiliationRouter } from './routes/affiliation/revoke-affiliation'
+import { GetInstitutionRouter } from './routes/institution/get-institution'
 
 export async function bootstrap() {
   const app = fastify().withTypeProvider<ZodTypeProvider>()
@@ -150,6 +152,7 @@ export async function bootstrap() {
   app.register(listProvidersByInstitution)
   app.register(listAvailabilitiesByInstitution)
   app.register(SendInvitationProviderRouter)
+  app.register(GetInstitutionRouter)
 
   // patient
   app.register(RegisterPatientRouter)
@@ -165,7 +168,7 @@ export async function bootstrap() {
   app.register(AffiliationConfirmingRouter)
   app.register(ListAffiliationRouter)
   app.register(EditAffiliationRouter)
-  app.register(DeleteAffiliationRouter)
+  app.register(RevokeAffiliationRouter)
 
   // Via cep
   app.register(GetAddressRouter)

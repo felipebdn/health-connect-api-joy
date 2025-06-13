@@ -1,5 +1,6 @@
 import type {
   AppointmentEventPatientRepository,
+  FindManyWithEventAndPatientProps,
   findManyWithEventAndPatientResponse,
 } from '@/domain/atlas-api/application/repositories/appointment-event-patient-repository'
 import type { AppointmentRepository } from '@/domain/atlas-api/application/repositories/appointment-repository'
@@ -21,7 +22,7 @@ export class InMemoryAppointmentEventPatientRepository
   ) {}
 
   async findManyWithEventAndPatient(
-    day: Date
+    data: FindManyWithEventAndPatientProps
   ): Promise<findManyWithEventAndPatientResponse> {
     const appointments: findManyWithEventAndPatientResponse = []
 
@@ -42,7 +43,7 @@ export class InMemoryAppointmentEventPatientRepository
         event &&
         patient &&
         provider &&
-        dayjs(event.startTime).isSame(day, 'day')
+        dayjs(event.startTime).isSame(data.date, 'day')
       ) {
         appointments.push({ appointment, event, patient, provider })
       }

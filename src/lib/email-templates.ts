@@ -61,7 +61,7 @@ export function sendInvitationTemplate(data: SendInvitationTemplateProps) {
 
                 <p>A clínica <strong>${data.institution_name}</strong> gostaria de se vincular ao seu perfil profissional em nossa plataforma.</p>
 
-                <p>Ao aceitar essa solicitação, você permitirá que a clínica tenha acesso às suas informações profissionais e possa agendar consultas em conjunto.</p>
+                <p>Ao aceitar essa solicitação, você permitirá que a clínica tenha acesso às suas informações profissionais.</p>
 
                 <a href="${data.to_accept}" class="cta-button">Aceitar Vinculação</a>
 

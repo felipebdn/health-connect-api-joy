@@ -11,6 +11,7 @@ import type {
 import { PrismaRatingMapper } from '../mappers/prisma-rating-mapper'
 import { PrismaAddressMapper } from '../mappers/prisma-address-mapper'
 import { PrismaAppointmentMapper } from '../mappers/prisma-appointment-mapper'
+import { PrismaAffiliationMapper } from '../mappers/prisma-affiliation-mapper'
 
 export class PrismaProviderEventRepository
   implements ProviderEventRatingRepository
@@ -68,6 +69,9 @@ export class PrismaProviderEventRepository
         },
         include: {
           rating: true,
+          institutions: {
+            where: { institutionId: data.institutionId },
+          },
           appointments: {
             include: { event: true },
             where: { institutionId: data.institutionId },
@@ -75,16 +79,19 @@ export class PrismaProviderEventRepository
         },
       })
       .then((providers) => {
-        return providers.map(({ appointments, rating, ...provider }) => {
-          return {
-            provider: PrismaProviderMapper.toDomain(provider),
-            appointments: appointments.map(({ event, ...appointment }) => ({
-              appointment: PrismaAppointmentMapper.toDomain(appointment),
-              event: PrismaEventMapper.toDomain(event),
-            })),
-            ratings: rating.map(PrismaRatingMapper.toDomain),
+        return providers.map(
+          ({ appointments, institutions, rating, ...provider }) => {
+            return {
+              provider: PrismaProviderMapper.toDomain(provider),
+              appointments: appointments.map(({ event, ...appointment }) => ({
+                appointment: PrismaAppointmentMapper.toDomain(appointment),
+                event: PrismaEventMapper.toDomain(event),
+              })),
+              ratings: rating.map(PrismaRatingMapper.toDomain),
+              affiliation: PrismaAffiliationMapper.toDomain(institutions[0]),
+            }
           }
-        })
+        )
       })
 
     return providersByInstitution

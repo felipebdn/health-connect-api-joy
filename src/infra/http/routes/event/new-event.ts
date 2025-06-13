@@ -58,7 +58,10 @@ export async function NewEventRouter(app: FastifyInstance) {
 
         const newEvent = makeNewEventUseCase()
 
-        const result = await newEvent.execute({ ...body })
+        const result = await newEvent.execute({
+          ...body,
+          institutionId: body.institutionId ?? undefined,
+        })
 
         if (result.isLeft()) {
           const error = result.value

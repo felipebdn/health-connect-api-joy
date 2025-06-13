@@ -1,5 +1,6 @@
 import type {
   AppointmentEventPatientRepository,
+  FindManyWithEventAndPatientProps,
   findManyWithEventAndPatientResponse,
 } from '@/domain/atlas-api/application/repositories/appointment-event-patient-repository'
 import type { Appointment } from '@/domain/atlas-api/enterprise/entities/appointment'
@@ -17,19 +18,24 @@ export class PrismaAppointmentEventPatientRepository
   constructor(private prisma: PrismaClient) {}
 
   async findManyWithEventAndPatient(
-    day: Date,
-    institutionId: string | undefined
+    data: FindManyWithEventAndPatientProps
   ): Promise<findManyWithEventAndPatientResponse> {
     const applications = await this.prisma.appointment.findMany({
-      include: { event: true, patient: true, provider: true },
+      include: {
+        event: true,
+        patient: true,
+        provider: true,
+        institution: true,
+      },
       where: {
         event: {
           startTime: {
-            gte: dayjs(day).startOf('day').toDate(),
-            lt: dayjs(day).endOf('day').toDate(),
+            gte: dayjs(data.date).startOf('day').toDate(),
+            lt: dayjs(data.date).endOf('day').toDate(),
           },
-          ...(institutionId && { institutionId }),
+          ...(data.institutionId && { institutionId: data.institutionId }),
         },
+        ...(data.institutionId && { institutionId: data.institutionId }),
       },
     })
     return applications.map((item) => {

@@ -1,4 +1,5 @@
 import type { Address } from '../../enterprise/entities/address'
+import type { Affiliation } from '../../enterprise/entities/affiliation'
 import type { Appointment } from '../../enterprise/entities/appointment'
 import type { EventEntity } from '../../enterprise/entities/event'
 import type { Provider } from '../../enterprise/entities/provider'
@@ -28,6 +29,7 @@ export type findByInstitutionResponse = {
   provider: Provider
   appointments: { appointment: Appointment; event: EventEntity }[]
   ratings: Rating[]
+  affiliation: Affiliation
 }
 
 export interface ProviderEventRatingRepository {

@@ -9,6 +9,10 @@ import { RatingPresenter } from '@/infra/db/presenters/rating-presenter'
 import { ListProvidersByInstitutionUseCase } from '@/domain/atlas-api/application/use-cases/list-providers-by-institution-use-case'
 import { AppointmentPresenter } from '@/infra/db/presenters/appointments-presenter'
 import { EventPresenter } from '@/infra/db/presenters/event-presenter'
+import {
+  AffiliationPresenter,
+  AffiliationPresenterSchema,
+} from '@/infra/db/presenters/affiliation-presenter'
 
 function makeListProvidersUseCase() {
   const prisma = getPrismaClient()
@@ -88,6 +92,7 @@ export async function listProvidersByInstitution(app: FastifyInstance) {
                     createdAt: z.coerce.date(),
                   })
                 ),
+                affiliation: AffiliationPresenterSchema,
               })
             ),
           }),
@@ -114,6 +119,7 @@ export async function listProvidersByInstitution(app: FastifyInstance) {
             event: EventPresenter.toHTTP(item.event),
           })),
           ratings: item.ratings.map(RatingPresenter.toHTTP),
+          affiliation: AffiliationPresenter.toHTTP(item.affiliation),
         })),
       })
     }

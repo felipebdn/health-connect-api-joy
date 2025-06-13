@@ -32,10 +32,10 @@ export class ListAppointmentsDayUseCase {
     institutionId,
   }: ListAppointmentsDayUseCaseRequest): Promise<ListAppointmentsDayUseCaseResponse> {
     const appointments =
-      await this.appointmentEventPatientRepository.findManyWithEventAndPatient(
-        day,
-        institutionId
-      )
+      await this.appointmentEventPatientRepository.findManyWithEventAndPatient({
+        date: day,
+        institutionId,
+      })
 
     return right({ appointments })
   }
