@@ -27,6 +27,8 @@ services:
     build:
       context: .
       dockerfile: dockerfile.deploy
+    env_file:
+      - .env
     depends_on:
       pg:
         condition: service_healthy
